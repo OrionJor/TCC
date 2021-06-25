@@ -1,0 +1,4 @@
+comprimento = "doido"
+cumprimento = "Olá " + "ofi"
+
+print(cumprimento, 6)

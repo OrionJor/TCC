@@ -1,0 +1,42 @@
+https://codezup.com/create-own-custom-array-implementation-python/
+
+https://www.ictdemy.com/python/basics/multidimensional-lists-in-python
+
+https://www.educative.io/edpresso/what-is-the-str-method-in-python
+
+array 3d python
+https://www.youtube.com/watch?v=Dw2TdjgCJeo
+https://www.youtube.com/watch?v=L-Sh5d52Esk
+Declaração logica
+https://www.delftstack.com/pt/howto/python/declare-3d-array-in-python/
+
+step -1 decresente
+https://pynative.com/python-range-function/
+
+Matriz Numpy
+https://www.youtube.com/watch?v=GB9ByFAIAH4
+https://www.youtube.com/watch?v=yDOy5UewRZM
+
+array 3d VBA
+https://www.youtube.com/watch?v=nj9lreE9rdE
+step -1 decresente
+https://www.youtube.com/watch?v=QK5efmnKwJo
+
+RETORNO DE MÚLTIPLOS VALORES EM FUNÇÕES – COM TUPLAS
+def func(x, y):
+    return x*y, x+y
+https://pythonhelp.wordpress.com/2011/11/25/retorno-de-multiplos-valores-em-funcoes-com-tuplas/
+
+RETORNO DE MÚLTIPLOS VALORES EM FUNÇÕES - COM VBA
+def a():
+   global b
+   b = "teste"
+
+def tes():
+    a()
+    print(b)
+    
+tes()
+
+resultado: teste
+https://pt.stackoverflow.com/questions/312440/fun%C3%A7%C3%B5es-em-python-vari%C3%A1veis-globais-e-locais
