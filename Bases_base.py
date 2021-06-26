@@ -162,14 +162,14 @@ class Solver_Option_Data:
 solver_options = Solver_Option_Data()
 
 class Candidate_Data:
-    def __init__(self):
-        self.mandatory = None
-        self.net_profit = None
-        self.total_distance = None
-        self.vertex_to_be_added = None
-        self.vehicle_type_index = None
-        self.vehicle_id = None
-        self.position = None
+    def __init__(self, mandatory, net_profit, total_distance, vertex_to_be_added, vehicle_type_index, vehicle_id, position):
+        self.mandatory = mandatory
+        self.net_profit = net_profit
+        self.total_distance = total_distance
+        self.vertex_to_be_added = vertex_to_be_added
+        self.vehicle_type_index = vehicle_type_index
+        self.vehicle_id = vehicle_id
+        self.position = position
 
     def set_candidate_data(self):
         return self.mandatory, self.net_profit, self.total_distance, self.vertex_to_be_added, self.vehicle_type_index, self.vehicle_id, self.position
@@ -177,6 +177,19 @@ class Candidate_Data:
     def get_candidate_data(self):
         return self.mandatory, self.net_profit, self.total_distance, self.vertex_to_be_added, self.vehicle_type_index, self.vehicle_id, self.position
 
+    def __repr__(self):
+        return str(self.__dict__)
+
+class Candidate(Candidate_Data):
+    def __init__(self):
+        self.candidate_list = []
+
+    def create_candidate(self, mandatory, net_profit, total_distance, vertex_to_be_added, vehicle_type_index, vehicle_id, position):
+        cave = Candidate_Data(mandatory, net_profit, total_distance, vertex_to_be_added, vehicle_type_index, vehicle_id, position)
+        self.candidate_list.append(cave)
+
+    
+    
 
 class DP_Data:
     def __init__(self):

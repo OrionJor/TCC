@@ -1,3 +1,11 @@
+inviar dados para o github
+Principal
+https://www.youtube.com/watch?v=MdthEusEoy8
+https://www.youtube.com/watch?v=GzRxUO41noY
+
+
+
+
 https://codezup.com/create-own-custom-array-implementation-python/
 
 https://www.ictdemy.com/python/basics/multidimensional-lists-in-python
