@@ -351,4 +351,5 @@ def GetVertexData():
 #GetVertexData()
 #GetVehicleTypeData()
 #GetSolverOptions()
-
+#dados = pd.read_excel('Dados/VRP_Spreadsheet_Solver_correta_Modelo.xlsm',sheet_name="4. Solução")
+#print(dados.iloc[0,0])
