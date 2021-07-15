@@ -1,14 +1,12 @@
 from Bases_base import *
 from In_solution import *
 from Get_m import *
-from Flesibility import *
-from EvaluateRoute_Single_e_Multi_Trip import *
-
-
 
 
 def ImproveSolution(solution):
 
+    #para saber de qual é a classe
+    #solution = Solution_Data()
     #é Long -> é inteiro estendido
     #é Integer -> é inteiro
     i = 0 # é Long
@@ -19,64 +17,65 @@ def ImproveSolution(solution):
     b = 0 # é Long
     c = 0 # é Long
     
-    vertex = None # é Long
-    vertex_buffer = [] # é  Long
-    vertex_buffer = [[] for i in range(vertex_list.num_customers)]
+    vertex = 0 # é Long
+    #vertex_buffer = [] # é  Long
+    vertex_buffer = np.zeros((vertex_list.num_customers), dtype ='int16')
     
-    vehicle_type_to_swap1 = None # é Long
-    vehicle_type_to_swap2 = None # é Long
-    vehicle_id_to_swap1 = None # é Long
-    vehicle_id_to_swap2 = None # é Long
-    position_to_swap1 = None # é Long
-    position_to_swap2 = None # é Long
-    vertex_to_swap = None # é Long
-    vehicle_id_start_index = None # é Long
+    vehicle_type_to_swap1 = 0 # é Long
+    vehicle_type_to_swap2 = 0 # é Long
+    vehicle_id_to_swap1 = 0 # é Long
+    vehicle_id_to_swap2 = 0 # é Long
+    position_to_swap1 = 0 # é Long
+    position_to_swap2 = 0 # é Long
+    vertex_to_swap = 0 # é Long
+    vehicle_id_start_index = 0 # é Long
     
-    vehicle_type_to_relocate1 = None # é Long
-    vehicle_type_to_relocate2 = None # é Long
-    vehicle_id_to_relocate1 = None # é Long
-    vehicle_id_to_relocate2 = None # é Long
-    position_to_relocate1 = None # é Long
-    position_to_relocate2 = None # é Long
+    vehicle_type_to_relocate1 = 0 # é Long
+    vehicle_type_to_relocate2 = 0 # é Long
+    vehicle_id_to_relocate1 = 0 # é Long
+    vehicle_id_to_relocate2 = 0 # é Long
+    position_to_relocate1 = 0 # é Long
+    position_to_relocate2 = 0 # é Long
     
-    vehicle_type_for_2opt1 = None # é Long
-    vehicle_type_for_2opt2 = None # é Long
-    vehicle_id_for_2opt1 = None # é Long
-    vehicle_id_for_2opt2 = None # é Long
-    position_for_2opt1 = None # é Long
-    position_for_2opt2 = None # é Long
-    vertex_cnt_for_2opt1 = None # é Long
-    vertex_cnt_for_2opt2 = None # é Long
+    vehicle_type_for_2opt1 = 0 # é Long
+    vehicle_type_for_2opt2 = 0 # é Long
+    vehicle_id_for_2opt1 = 0 # é Long
+    vehicle_id_for_2opt2 = 0 # é Long
+    position_for_2opt1 = 0 # é Long
+    position_for_2opt2 = 0 # é Long
+    vertex_cnt_for_2opt1 = 0 # é Long
+    vertex_cnt_for_2opt2 = 0 # é Long
     
-    reversal_for_2opt1 = None # é Long
-    reversal_for_2opt2 = None # é Long
+    reversal_for_2opt1 = 0 # é Long
+    reversal_for_2opt2 = 0 # é Long
     
-    vehicle_type_for_chain_reversal = None # é Long
-    vehicle_id_for_chain_reversal = None # é Long
-    position_for_chain_reversal1 = None # é Long
-    position_for_chain_reversal2 = None # é Long
-    midpoint_for_chain_reversal = None # é Long
+    vehicle_type_for_chain_reversal = 0 # é Long
+    vehicle_id_for_chain_reversal = 0 # é Long
+    position_for_chain_reversal1 = 0 # é Long
+    position_for_chain_reversal2 = 0 # é Long
+    midpoint_for_chain_reversal = 0 # é Long
     
-    vehicle_type_for_full_swap1 = None # é Long
-    vehicle_type_for_full_swap2 = None # é Long
-    vehicle_id_for_full_swap1 = None # é Long
-    vehicle_id_for_full_swap2 = None # é Long
-    max_vertex_cnt = None # é Long
-    vertex_cnt_to_swap = None # é Long
+    vehicle_type_for_full_swap1 = 0 # é Long
+    vehicle_type_for_full_swap2 = 0 # é Long
+    vehicle_id_for_full_swap1 = 0 # é Long
+    vehicle_id_for_full_swap2 = 0 # é Long
+    max_vertex_cnt = 0 # é Long
+    vertex_cnt_to_swap = 0 # é Long
     
-    max_net_profit = None # é Double
-    min_total_distance = None # é Double
+    max_net_profit = 0 # é Double
+    min_total_distance = 0 # é Double
     
-    improvement_iterations = None # é Integer
+    improvement_iterations = 0 # é Integer
     
-    improvement_iterations = 0
+    #para saber de onde vem os dados
+    #GetVertexData()
+    #GetVehicleTypeData()
     
     #polishing -> polimento
     
     #MsgBox "Before improvement: " & solution.net_profit '& " " & solution.feasible -> #MsgBox "Antes da melhoria:" & solution.net_profit '& "" & solution.feasible
     
-    
-    
+
     while True:
 
         #With solution
@@ -89,8 +88,8 @@ def ImproveSolution(solution):
         vehicle_type_to_swap1 = -1
         #For i = 1 To vehicle_type_list.num_vehicle_types
         for i in range(0, vehicle_type_list.num_vehicle_types):
-            #For j = 1 To vehicle_type_list.vehicle_types[i].number_available
-            for j in range(0, vehicle_type_list.vehicle_types[i].number_available):
+            #For j = 1 To vehicle_type_list.vehicle_types[i].NumberAvailable
+            for j in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable):
                 #For k = 1 To .route_vertex_cnt[i, j]
                 for k in range(0, solution.route_vertex_cnt[i, j]):
                     #For a = i To vehicle_type_list.num_vehicle_types
@@ -101,8 +100,8 @@ def ImproveSolution(solution):
                         else:
                             vehicle_id_start_index = 1
 
-                        #For b = vehicle_id_start_index To vehicle_type_list.vehicle_types[a].number_available
-                        for b in range(vehicle_id_start_index, vehicle_type_list.vehicle_types[a].number_available):
+                        #For b = vehicle_id_start_index To vehicle_type_list.vehicle_types[a].NumberAvailable
+                        for b in range(vehicle_id_start_index, vehicle_type_list.vehicle_types[a].NumberAvailable):
                             #For c = 1 To .route_vertex_cnt[a, b]
                             for c in range(0, solution.route_vertex_cnt[a, b]):
     
@@ -155,8 +154,8 @@ def ImproveSolution(solution):
         vehicle_type_to_relocate1 = -1
         #For i = 1 To vehicle_type_list.num_vehicle_types
         for i  in range(0, vehicle_type_list.num_vehicle_types):
-            #For j = 1 To vehicle_type_list.vehicle_types[i].number_available
-            for j  in range(0, vehicle_type_list.vehicle_types[i].number_available):
+            #For j = 1 To vehicle_type_list.vehicle_types[i].NumberAvailable
+            for j  in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable):
                 #For k = 1 To .route_vertex_cnt[i, j]
                 for k  in range(0, solution.route_vertex_cnt[i, j]):
 
@@ -166,10 +165,10 @@ def ImproveSolution(solution):
 
                     #For a = 1 To vehicle_type_list.num_vehicle_types
                     for a  in range(0, vehicle_type_list.num_vehicle_types):
-                        #For b = 1 To vehicle_type_list.vehicle_types[a].number_available
-                        for b in range(0, vehicle_type_list.vehicle_types[a].number_available):
+                        #For b = 1 To vehicle_type_list.vehicle_types[a].NumberAvailable
+                        for b in range(0, vehicle_type_list.vehicle_types[a].NumberAvailable):
                             #For c = 1 To .route_vertex_cnt[a, b] + 1
-                            for c  in range(0, solution.route_vertex_cnt[a, b] + 1):
+                            for c  in range(0, solution.route_vertex_cnt[a, b] +1):
                                     
                                 AddVertex(solution, vertex, a, b, c)
 
@@ -202,8 +201,8 @@ def ImproveSolution(solution):
     
         #For i = 1 To vehicle_type_list.num_vehicle_types
         for i in range(0, vehicle_type_list.num_vehicle_types):
-            #For j = 1 To vehicle_type_list.vehicle_types[i].number_available
-            for j in range(0, vehicle_type_list.vehicle_types[i].number_available):
+            #For j = 1 To vehicle_type_list.vehicle_types[i].NumberAvailable
+            for j in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable):
                         
                 #For a = i To vehicle_type_list.num_vehicle_types
                 for a in range(i, vehicle_type_list.num_vehicle_types):
@@ -211,21 +210,27 @@ def ImproveSolution(solution):
                     if a == i :
                         vehicle_id_start_index = j + 1
                     else:
-                        vehicle_id_start_index = 1
+                        #vehicle_id_start_index = 1
+                        vehicle_id_start_index = 0
                             
                             
-                    #For b = vehicle_id_start_index To vehicle_type_list.vehicle_types[a].number_available
-                    for b in range(vehicle_id_start_index, vehicle_type_list.vehicle_types[a].number_available):
+                    #For b = vehicle_id_start_index To vehicle_type_list.vehicle_types[a].NumberAvailable
+                    for b in range(vehicle_id_start_index, vehicle_type_list.vehicle_types[a].NumberAvailable):
                                 
-                        if (solution.route_vertex_cnt[i, j] > 2) and (solution.route_vertex_cnt[a, b] > 2) :
+                        #If (.route_vertex_cnt(i, j) > 2) And (.route_vertex_cnt(a, b) > 2)
+                        if (solution.route_vertex_cnt[i, j] > 1) and (solution.route_vertex_cnt[a, b] > 1):
                                     
                             #For k = 1 To .route_vertex_cnt[i, j] - 1
                             for k in range(0, solution.route_vertex_cnt[i, j] - 1):
                                 #For c = 1 To .route_vertex_cnt[a, b] - 1
                                 for c  in range(0, solution.route_vertex_cnt[a, b] - 1):
+
+                                    #anterior
+                                    #vertex_cnt_for_2opt1 = (solution.route_vertex_cnt[i, j]) - k
+                                    #vertex_cnt_for_2opt2 = (solution.route_vertex_cnt[a, b}) - c
         
-                                    vertex_cnt_for_2opt1 = solution.route_vertex_cnt[i, j] - k
-                                    vertex_cnt_for_2opt2 = solution.route_vertex_cnt[a, b] - c
+                                    vertex_cnt_for_2opt1 = (solution.route_vertex_cnt[i, j] -1) - k
+                                    vertex_cnt_for_2opt2 = (solution.route_vertex_cnt[a, b] -1) - c
         
                                     #For vertex = k + 1 To .route_vertex_cnt[i, j]
                                     for vertex in range(k + 1, solution.route_vertex_cnt[i, j]):
@@ -233,12 +238,12 @@ def ImproveSolution(solution):
                                              
         
                                     #For vertex = c + 1 To .route_vertex_cnt[a, b]
-                                    for vertex in range(c, solution.route_vertex_cnt[a, b]):
+                                    for vertex in range(c + 1, solution.route_vertex_cnt[a, b]):
                                         solution.route_vertices[k + vertex - c, i, j] = solution.route_vertices[vertex, a, b]
                                              
         
                                     #For vertex = k + 1 To .route_vertex_cnt[i, j]
-                                    for vertex in range(k, solution.route_vertex_cnt[i, j]):
+                                    for vertex in range(k +1 , solution.route_vertex_cnt[i, j]):
                                         solution.route_vertices[c + vertex - k, a, b] = vertex_buffer[vertex]
                                              
         
@@ -270,22 +275,24 @@ def ImproveSolution(solution):
                                         vehicle_id_for_2opt2 = b
                                         position_for_2opt2 = c
         
-                                        reversal_for_2opt1 = 0
-                                        reversal_for_2opt2 = 0
+                                        reversal_for_2opt1 = 0 # verifica
+                                        reversal_for_2opt2 = 0 # verifica
         
-                                        vehicle_type_to_swap1 = -1
-                                        vehicle_type_to_relocate1 = -1
+                                        vehicle_type_to_swap1 = -1 # verifica
+                                        vehicle_type_to_relocate1 = -1 # verifica
                                              
         
                                     #'revert route i,j - > reverter rota i, j
         
-                                    midpoint_for_chain_reversal = (solution.route_vertex_cnt[i, j] - (k + 1)) / 2
+                                    midpoint_for_chain_reversal = ((solution.route_vertex_cnt[i, j] -1) - (k + 1)) / 2
         
                                     #For vertex = 0 To midpoint_for_chain_reversal
-                                    for vertex in range(0, midpoint_for_chain_reversal):
+                                    for vertex in range(0, midpoint_for_chain_reversal +1):
                                         vertex_to_swap = solution.route_vertices[k + 1 + vertex, i, j]
-                                        solution.route_vertices[k + 1 + vertex, i, j] = solution.route_vertices[solution.route_vertex_cnt[i, j] - vertex, i, j]
-                                        solution.route_vertices[solution.route_vertex_cnt[i, j] - vertex, i, j] = vertex_to_swap
+                                        #solution.route_vertices[k + 1 + vertex, i, j] = solution.route_vertices[solution.route_vertex_cnt[i, j] - vertex, i, j] #anterior
+                                        solution.route_vertices[k + 1 + vertex, i, j] = solution.route_vertices[(solution.route_vertex_cnt[i, j] -1) - vertex, i, j]
+                                        #solution.route_vertices[solution.route_vertex_cnt[i, j] - vertex, i, j] = vertex_to_swap # anterior
+                                        solution.route_vertices[(solution.route_vertex_cnt[i, j] -1) - vertex, i, j] = vertex_to_swap
                                              
         
                                     if instance.multi_trip == True :
@@ -311,22 +318,25 @@ def ImproveSolution(solution):
                                         vehicle_id_for_2opt2 = b
                                         position_for_2opt2 = c
         
-                                        reversal_for_2opt1 = 1
-                                        reversal_for_2opt2 = 0
+                                        reversal_for_2opt1 = 1 # verifica
+                                        reversal_for_2opt2 = 0 # verifica
         
-                                        vehicle_type_to_swap1 = -1
-                                        vehicle_type_to_relocate1 = -1
+                                        vehicle_type_to_swap1 = -1 # verifica
+                                        vehicle_type_to_relocate1 = -1 # verifica
                                              
         
                                     #'revert route a,b -> 'reverter rota a, b
         
-                                    midpoint_for_chain_reversal = (solution.route_vertex_cnt[a, b] - (c + 1)) / 2
+                                    midpoint_for_chain_reversal = ((solution.route_vertex_cnt[a, b] -1) - (c + 1)) / 2
         
-                                    #For vertex = 0 To midpoint_for_chain_reversal
-                                    for vertex in range(0, midpoint_for_chain_reversal):
+                                    #For vertex = 0 To midpoint_for_chain_reversal # verificar
+                                    for vertex in range(0, midpoint_for_chain_reversal +1):
                                         vertex_to_swap = solution.route_vertices[c + 1 + vertex, a, b]
-                                        solution.route_vertices[c + 1 + vertex, a, b] = solution.route_vertices[solution.route_vertex_cnt[a, b] - vertex, a, b]
-                                        solution.route_vertices[solution.route_vertex_cnt[a, b] - vertex, a, b] = vertex_to_swap
+                                        #solution.route_vertices[c + 1 + vertex, a, b] = solution.route_vertices[solution.route_vertex_cnt[a, b] - vertex, a, b]#anterior
+                                        #solution.route_vertices[solution.route_vertex_cnt[a, b] - vertex, a, b] = vertex_to_swap #anterior
+                                        
+                                        solution.route_vertices[c + 1 + vertex, a, b] = solution.route_vertices[(solution.route_vertex_cnt[a, b] -1) - vertex, a, b]
+                                        solution.route_vertices[(solution.route_vertex_cnt[a, b] -1) - vertex, a, b] = vertex_to_swap
                                              
         
                                     if instance.multi_trip == True :
@@ -352,22 +362,22 @@ def ImproveSolution(solution):
                                         vehicle_id_for_2opt2 = b
                                         position_for_2opt2 = c
         
-                                        reversal_for_2opt1 = 1
-                                        reversal_for_2opt2 = 1
+                                        reversal_for_2opt1 = 1 # verifica
+                                        reversal_for_2opt2 = 1 # verifica
         
-                                        vehicle_type_to_swap1 = -1
-                                        vehicle_type_to_relocate1 = -1
+                                        vehicle_type_to_swap1 = -1 # verifica
+                                        vehicle_type_to_relocate1 = -1 # verifica
                                              
         
                                     #revert route i,j again -> reverter rota i, j novamente
         
-                                    midpoint_for_chain_reversal = (solution.route_vertex_cnt[i, j] - (k + 1)) / 2
+                                    midpoint_for_chain_reversal = ((solution.route_vertex_cnt[i, j] -1) - (k + 1)) / 2
         
                                     #For vertex = 0 To midpoint_for_chain_reversal
-                                    for vertex in range(0, midpoint_for_chain_reversal):
+                                    for vertex in range(0, midpoint_for_chain_reversal +1):
                                         vertex_to_swap = solution.route_vertices[k + 1 + vertex, i, j]
-                                        solution.route_vertices[k + 1 + vertex, i, j] = solution.route_vertices[solution.route_vertex_cnt[i, j] - vertex, i, j]
-                                        solution.route_vertices[solution.route_vertex_cnt[i, j] - vertex, i, j] = vertex_to_swap
+                                        solution.route_vertices[k + 1 + vertex, i, j] = solution.route_vertices[(solution.route_vertex_cnt[i, j] -1) - vertex, i, j]
+                                        solution.route_vertices[(solution.route_vertex_cnt[i, j] -1) - vertex, i, j] = vertex_to_swap
                                              
         
                                     if instance.multi_trip == True :
@@ -393,36 +403,40 @@ def ImproveSolution(solution):
                                         vehicle_id_for_2opt2 = b
                                         position_for_2opt2 = c
         
-                                        reversal_for_2opt1 = 0
-                                        reversal_for_2opt2 = 1
+                                        reversal_for_2opt1 = 0 # verifica
+                                        reversal_for_2opt2 = 1 # verifica
         
-                                        vehicle_type_to_swap1 = -1
-                                        vehicle_type_to_relocate1 = -1
+                                        vehicle_type_to_swap1 = -1 # verifica
+                                        vehicle_type_to_relocate1 = -1 # verifica
                                              
         
                                     #'revert route a,b again
                                     #reverter rota a, b novamente
         
-                                    midpoint_for_chain_reversal = (solution.route_vertex_cnt[a, b] - (c + 1)) / 2
+                                    midpoint_for_chain_reversal = ((solution.route_vertex_cnt[a, b] -1) - (c + 1)) / 2
         
                                     #For vertex = 0 To midpoint_for_chain_reversal
-                                    for vertex in range(0, midpoint_for_chain_reversal):
+                                    for vertex in range(0, midpoint_for_chain_reversal +1):
                                         vertex_to_swap = solution.route_vertices[c + 1 + vertex, a, b]
-                                        solution.route_vertices[c + 1 + vertex, a, b] = solution.route_vertices[solution.route_vertex_cnt[a, b] - vertex, a, b]
-                                        solution.route_vertices[solution.route_vertex_cnt[a, b] - vertex, a, b] = vertex_to_swap
+                                        #anterior
+                                        #solution.route_vertices[c + 1 + vertex, a, b] = solution.route_vertices[solution.route_vertex_cnt[a, b] - vertex, a, b]
+                                        #solution.route_vertices[solution.route_vertex_cnt[a, b] - vertex, a, b] = vertex_to_swap
+                                        
+                                        solution.route_vertices[c + 1 + vertex, a, b] = solution.route_vertices[(solution.route_vertex_cnt[a, b] -1) - vertex, a, b]
+                                        solution.route_vertices[(solution.route_vertex_cnt[a, b] -1) - vertex, a, b] = vertex_to_swap
                                              
         
                                     #EvaluateRouteSingleTrip(solution, a, b)
         
-                                    vertex_cnt_for_2opt1 = solution.route_vertex_cnt[i, j] - k
-                                    vertex_cnt_for_2opt2 = solution.route_vertex_cnt[a, b] - c
+                                    vertex_cnt_for_2opt1 = (solution.route_vertex_cnt[i, j] -1) - k
+                                    vertex_cnt_for_2opt2 = (solution.route_vertex_cnt[a, b] -1) - c
         
                                     #For vertex = k + 1 To .route_vertex_cnt[i, j]
-                                    for vertex in range(k, solution.route_vertex_cnt[i, j]):
+                                    for vertex in range(k+1, solution.route_vertex_cnt[i, j]):
                                         vertex_buffer[vertex] = solution.route_vertices[vertex, i, j]
                                              
                                     #For vertex = c + 1 To .route_vertex_cnt[a, b]
-                                    for vertex in range(c, solution.route_vertex_cnt[a, b]):
+                                    for vertex in range(c+1, solution.route_vertex_cnt[a, b]):
                                         solution.route_vertices[k + vertex - c, i, j] = solution.route_vertices[vertex, a, b]
                                              
                                     #For vertex = k + 1 To .route_vertex_cnt[i, j]
@@ -430,8 +444,8 @@ def ImproveSolution(solution):
                                         solution.route_vertices[c + vertex - k, a, b] = vertex_buffer[vertex]
                                              
         
-                                    solution.route_vertex_cnt[i, j] = k + vertex_cnt_for_2opt2
-                                    solution.route_vertex_cnt[a, b] = c + vertex_cnt_for_2opt1
+                                    solution.route_vertex_cnt[i, j] = ((k + vertex_cnt_for_2opt2) + 1)
+                                    solution.route_vertex_cnt[a, b] = ((c + vertex_cnt_for_2opt1) + 1)
         
                                     if instance.multi_trip == True :
                                              
@@ -453,17 +467,17 @@ def ImproveSolution(solution):
     
         #For i = 1 To vehicle_type_list.num_vehicle_types
         for i in range(0, vehicle_type_list.num_vehicle_types):
-            #For j = 1 To vehicle_type_list.vehicle_types[i].number_available
-            for j  in range(0, vehicle_type_list.vehicle_types[i].number_available):
+            #For j = 1 To vehicle_type_list.vehicle_types[i].NumberAvailable
+            for j  in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable):
                 #For k = 1 To .route_vertex_cnt[i, j] - 3
                 for k  in range(0, solution.route_vertex_cnt[i, j] - 3):
                     #For c = k + 3 To .route_vertex_cnt[i, j]
-                    for c in range(k + 2, solution.route_vertex_cnt[i, j]):
+                    for c in range(k + 3, solution.route_vertex_cnt[i, j]):
     
                         midpoint_for_chain_reversal = (c - k) / 2
     
                         #For vertex = 0 To midpoint_for_chain_reversal
-                        for vertex in range(0, midpoint_for_chain_reversal):
+                        for vertex in range(0, int(midpoint_for_chain_reversal +1)):
                             vertex_to_swap = solution.route_vertices[k + vertex, i, j]
                             solution.route_vertices[k + vertex, i, j] = solution.route_vertices[c - vertex, i, j]
                             solution.route_vertices[c - vertex, i, j] = vertex_to_swap
@@ -495,7 +509,7 @@ def ImproveSolution(solution):
                             
     
                         #For vertex = 0 To midpoint_for_chain_reversal
-                        for vertex in range(0, midpoint_for_chain_reversal):
+                        for vertex in range(0, int(midpoint_for_chain_reversal +1)):
                             vertex_to_swap = solution.route_vertices[k + vertex, i, j]
                             solution.route_vertices[k + vertex, i, j] = solution.route_vertices[c - vertex, i, j]
                             solution.route_vertices[c - vertex, i, j] = vertex_to_swap
@@ -519,17 +533,17 @@ def ImproveSolution(solution):
              
             #For i = 1 To vehicle_type_list.num_vehicle_types
             for i in range(0, vehicle_type_list.num_vehicle_types):
-                #For j = 1 To vehicle_type_list.vehicle_types[i].number_available
-                for j in range(0, vehicle_type_list.vehicle_types[i].number_available):
+                #For j = 1 To vehicle_type_list.vehicle_types[i].NumberAvailable
+                for j in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable):
                     #For a = i + 1 To vehicle_type_list.num_vehicle_types
                     for a in range(i, vehicle_type_list.num_vehicle_types):
-                        #For b = 1 To vehicle_type_list.vehicle_types[a].number_available
-                        for b in range(0, vehicle_type_list.vehicle_types[a].number_available):
+                        #For b = 1 To vehicle_type_list.vehicle_types[a].NumberAvailable
+                        for b in range(0, vehicle_type_list.vehicle_types[a].NumberAvailable):
                                   
-                            max_vertex_cnt = solution.route_vertex_cnt[i, j]
+                            max_vertex_cnt = (solution.route_vertex_cnt[i, j] - 1)
                                   
-                            if max_vertex_cnt < solution.route_vertex_cnt[a, b] :
-                                max_vertex_cnt = solution.route_vertex_cnt[a, b]
+                            if max_vertex_cnt < (solution.route_vertex_cnt[a, b] -1):
+                                max_vertex_cnt = (solution.route_vertex_cnt[a, b] -1)
                                   
                                   
                             #For k = 1 To max_vertex_cnt
@@ -539,9 +553,9 @@ def ImproveSolution(solution):
                                 solution.route_vertices[k, a, b] = vertex_to_swap
             
                                   
-                            vertex_cnt_to_swap = solution.route_vertex_cnt[i, j]
+                            vertex_cnt_to_swap = (solution.route_vertex_cnt[i, j] -1)
                             solution.route_vertex_cnt[i, j] = solution.route_vertex_cnt[a, b]
-                            solution.route_vertex_cnt[a, b] = vertex_cnt_to_swap
+                            solution.route_vertex_cnt[a, b] = (vertex_cnt_to_swap + 1)
                                   
                             if instance.multi_trip == True :
                                              
@@ -577,9 +591,9 @@ def ImproveSolution(solution):
                                 solution.route_vertices[k, i, j] = solution.route_vertices[k, a, b]
                                 solution.route_vertices[k, a, b] = vertex_to_swap
                                   
-                                vertex_cnt_to_swap = solution.route_vertex_cnt[i, j]
-                                solution.route_vertex_cnt[i, j] = solution.route_vertex_cnt[a, b]
-                                solution.route_vertex_cnt[a, b] = vertex_cnt_to_swap
+                            vertex_cnt_to_swap = (solution.route_vertex_cnt[i, j] -1)
+                            solution.route_vertex_cnt[i, j] = solution.route_vertex_cnt[a, b]
+                            solution.route_vertex_cnt[a, b] = (vertex_cnt_to_swap + 1 )
                                   
                             if instance.multi_trip == True :
                                              
@@ -625,26 +639,26 @@ def ImproveSolution(solution):
              
             if vehicle_type_for_2opt1 != -1 :
     
-                vertex_cnt_for_2opt1 = solution.route_vertex_cnt[vehicle_type_for_2opt1, vehicle_id_for_2opt1] - position_for_2opt1
-                vertex_cnt_for_2opt2 = solution.route_vertex_cnt[vehicle_type_for_2opt2, vehicle_id_for_2opt2] - position_for_2opt2
+                vertex_cnt_for_2opt1 = (solution.route_vertex_cnt[vehicle_type_for_2opt1, vehicle_id_for_2opt1] - 1) - position_for_2opt1
+                vertex_cnt_for_2opt2 = (solution.route_vertex_cnt[vehicle_type_for_2opt2, vehicle_id_for_2opt2] -1) - position_for_2opt2
     
                 #For vertex = position_for_2opt1 + 1 To .route_vertex_cnt[vehicle_type_for_2opt1, vehicle_id_for_2opt1]
-                for vertex in range(position_for_2opt1, solution.route_vertex_cnt[vehicle_type_for_2opt1, vehicle_id_for_2opt1]):
+                for vertex in range(position_for_2opt1 +1, solution.route_vertex_cnt[vehicle_type_for_2opt1, vehicle_id_for_2opt1]):
                     vertex_buffer[vertex] = solution.route_vertices[vertex, vehicle_type_for_2opt1, vehicle_id_for_2opt1]
                 
     
                 #For vertex = position_for_2opt2 + 1 To .route_vertex_cnt[vehicle_type_for_2opt2, vehicle_id_for_2opt2]
-                for vertex in range(position_for_2opt2, solution.route_vertex_cnt[vehicle_type_for_2opt2, vehicle_id_for_2opt2]):
+                for vertex in range(position_for_2opt2 +1, solution.route_vertex_cnt[vehicle_type_for_2opt2, vehicle_id_for_2opt2]):
                     solution.route_vertices[position_for_2opt1 + vertex - position_for_2opt2, vehicle_type_for_2opt1, vehicle_id_for_2opt1] = solution.route_vertices[vertex, vehicle_type_for_2opt2, vehicle_id_for_2opt2]
                 
     
                 #For vertex = position_for_2opt1 + 1 To .route_vertex_cnt[vehicle_type_for_2opt1, vehicle_id_for_2opt1]
-                for vertex in range(position_for_2opt1, solution.route_vertex_cnt[vehicle_type_for_2opt1, vehicle_id_for_2opt1]):
+                for vertex in range(position_for_2opt1 +1, solution.route_vertex_cnt[vehicle_type_for_2opt1, vehicle_id_for_2opt1]):
                     solution.route_vertices[position_for_2opt2 + vertex - position_for_2opt1, vehicle_type_for_2opt2, vehicle_id_for_2opt2] = vertex_buffer[vertex]
                 
     
-                solution.route_vertex_cnt[vehicle_type_for_2opt1, vehicle_id_for_2opt1] = position_for_2opt1 + vertex_cnt_for_2opt2
-                solution.route_vertex_cnt[vehicle_type_for_2opt2, vehicle_id_for_2opt2] = position_for_2opt2 + vertex_cnt_for_2opt1
+                solution.route_vertex_cnt[vehicle_type_for_2opt1, vehicle_id_for_2opt1] = ((position_for_2opt1 + vertex_cnt_for_2opt2) + 1)
+                solution.route_vertex_cnt[vehicle_type_for_2opt2, vehicle_id_for_2opt2] = ((position_for_2opt2 + vertex_cnt_for_2opt1) + 1)
     
                 if reversal_for_2opt1 == 1 :
     
@@ -652,13 +666,13 @@ def ImproveSolution(solution):
                     j = vehicle_id_for_2opt1
                     k = position_for_2opt1
     
-                    midpoint_for_chain_reversal = (solution.route_vertex_cnt[i, j] - (k + 1)) / 2
+                    midpoint_for_chain_reversal = ((solution.route_vertex_cnt[i, j] -1) - (k + 1)) / 2
     
                     #For vertex = 0 To midpoint_for_chain_reversal
-                    for vertex in range(0, midpoint_for_chain_reversal):
+                    for vertex in range(0, midpoint_for_chain_reversal +1):
                         vertex_to_swap = solution.route_vertices[k + 1 + vertex, i, j]
-                        solution.route_vertices[k + 1 + vertex, i, j] = solution.route_vertices[solution.route_vertex_cnt[i, j] - vertex, i, j]
-                        solution.route_vertices[solution.route_vertex_cnt[i, j] - vertex, i, j] = vertex_to_swap
+                        solution.route_vertices[k + 1 + vertex, i, j] = solution.route_vertices[(solution.route_vertex_cnt[i, j] -1) - vertex, i, j]
+                        solution.route_vertices[(solution.route_vertex_cnt[i, j] -1) - vertex, i, j] = vertex_to_swap
                     
                 
     
@@ -668,13 +682,13 @@ def ImproveSolution(solution):
                     b = vehicle_id_for_2opt2
                     c = position_for_2opt2
     
-                    midpoint_for_chain_reversal = (solution.route_vertex_cnt[a, b] - (c + 1)) / 2
+                    midpoint_for_chain_reversal = ((solution.route_vertex_cnt[a, b] -1) - (c + 1)) / 2
     
                     #For vertex = 0 To midpoint_for_chain_reversal
-                    for vertex in range(0, midpoint_for_chain_reversal):
+                    for vertex in range(0, midpoint_for_chain_reversal +1):
                         vertex_to_swap = solution.route_vertices[c + 1 + vertex, a, b]
-                        solution.route_vertices[c + 1 + vertex, a, b] = solution.route_vertices[solution.route_vertex_cnt[a, b] - vertex, a, b]
-                        solution.route_vertices[solution.route_vertex_cnt[a, b] - vertex, a, b] = vertex_to_swap
+                        solution.route_vertices[c + 1 + vertex, a, b] = solution.route_vertices[(solution.route_vertex_cnt[a, b] - 1) - vertex, a, b]
+                        solution.route_vertices[(solution.route_vertex_cnt[a, b] -1) - vertex, a, b] = vertex_to_swap
                     
                 
     
@@ -703,7 +717,7 @@ def ImproveSolution(solution):
                 midpoint_for_chain_reversal = (position_for_chain_reversal2 - position_for_chain_reversal1) / 2
     
                 #For vertex = 0 To midpoint_for_chain_reversal
-                for vertex in range(0, midpoint_for_chain_reversal):
+                for vertex in range(0, midpoint_for_chain_reversal +1):
                     vertex_to_swap = solution.route_vertices[position_for_chain_reversal1 + vertex, vehicle_type_for_chain_reversal, vehicle_id_for_chain_reversal]
                     solution.route_vertices[position_for_chain_reversal1 + vertex, vehicle_type_for_chain_reversal, vehicle_id_for_chain_reversal] = solution.route_vertices[position_for_chain_reversal2 - vertex, vehicle_type_for_chain_reversal, vehicle_id_for_chain_reversal]
                     solution.route_vertices[position_for_chain_reversal2 - vertex, vehicle_type_for_chain_reversal, vehicle_id_for_chain_reversal] = vertex_to_swap
@@ -725,10 +739,10 @@ def ImproveSolution(solution):
              
             if vehicle_type_for_full_swap1 != -1:
     
-                max_vertex_cnt = solution.route_vertex_cnt[vehicle_type_for_full_swap1, vehicle_id_for_full_swap1]
+                max_vertex_cnt = (solution.route_vertex_cnt[vehicle_type_for_full_swap1, vehicle_id_for_full_swap1] -1)
                                   
-                if max_vertex_cnt < solution.route_vertex_cnt[vehicle_type_for_full_swap2, vehicle_id_for_full_swap2]:
-                    max_vertex_cnt = solution.route_vertex_cnt[vehicle_type_for_full_swap2, vehicle_id_for_full_swap2]
+                if max_vertex_cnt < (solution.route_vertex_cnt[vehicle_type_for_full_swap2, vehicle_id_for_full_swap2] -1):
+                    max_vertex_cnt = (solution.route_vertex_cnt[vehicle_type_for_full_swap2, vehicle_id_for_full_swap2] -1)
                 
                 
                 #For vertex = 1 To max_vertex_cnt
@@ -738,9 +752,9 @@ def ImproveSolution(solution):
                     solution.route_vertices[vertex, vehicle_type_for_full_swap2, vehicle_id_for_full_swap2] = vertex_to_swap
                 
                 
-                vertex_cnt_to_swap = solution.route_vertex_cnt[vehicle_type_for_full_swap1, vehicle_id_for_full_swap1]
+                vertex_cnt_to_swap = (solution.route_vertex_cnt[vehicle_type_for_full_swap1, vehicle_id_for_full_swap1] - 1)
                 solution.route_vertex_cnt[vehicle_type_for_full_swap1, vehicle_id_for_full_swap1] = solution.route_vertex_cnt[vehicle_type_for_full_swap2, vehicle_id_for_full_swap2]
-                solution.route_vertex_cnt[vehicle_type_for_full_swap2, vehicle_id_for_full_swap2] = vertex_cnt_to_swap
+                solution.route_vertex_cnt[vehicle_type_for_full_swap2, vehicle_id_for_full_swap2] = (vertex_cnt_to_swap + 1)
                 
                 if instance.multi_trip == True :
                 
@@ -760,7 +774,7 @@ def ImproveSolution(solution):
         
         improvement_iterations = improvement_iterations + 1
 
-        if ((vehicle_type_to_swap1 != -1) or (vehicle_type_to_relocate1 != -1) or (vehicle_type_for_2opt1 != -1) or (vehicle_type_for_chain_reversal != -1) or (vehicle_type_for_full_swap1 != -1)) and (improvement_iterations <= max_improvement_iterations):
+        if ((vehicle_type_to_swap1 == -1) or (vehicle_type_to_relocate1 == -1) or (vehicle_type_for_2opt1 == -1) or (vehicle_type_for_chain_reversal == -1) or (vehicle_type_for_full_swap1 == -1)) and (improvement_iterations <= max_improvement_iterations):
             break
 
     EvaluateSolution(solution)

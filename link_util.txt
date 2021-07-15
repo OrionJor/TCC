@@ -1,3 +1,7 @@
+pandas
+https://github.com/BindiChen/machine-learning/blob/master/data-analysis/005-6-pandas-tricks/6-pandas-tricks.ipynb
+
+
 Lange Neighbourhood Search
 https://www.youtube.com/watch?v=BZA_UaX8rs8
 https://www.youtube.com/watch?v=B_-dgp4Dd-8
@@ -51,6 +55,10 @@ def tes():
     print(b)
     
 tes()
+
+templeite do Resultado http://leg.ufpr.br/~walmes/ensino/dsbd/01-python-pandas.html#1
+https://stackoverflow.com/questions/67010158/xlsxwriter-formatting-is-corrupting-my-excel-file
+
 
 resultado: teste
 https://pt.stackoverflow.com/questions/312440/fun%C3%A7%C3%B5es-em-python-vari%C3%A1veis-globais-e-locais
