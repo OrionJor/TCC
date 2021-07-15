@@ -25,7 +25,7 @@ def Time_Converter(tempo):
 
 
 def GetVertexData():
-    dados = pd.read_excel('Dados/VRP_Spreadsheet_Solver_correta_Modelo.xlsm',sheet_name="VRP Solver Console")
+    dados = pd.read_excel('Dados/VRP_Spreadsheet_Solver_6Ps.xlsm',sheet_name="VRP Solver Console")
 
     #para saber de qual classe pertence
     vertex_list = Vertex_List_Data()
@@ -37,7 +37,7 @@ def GetVertexData():
     
 
     #cria vetor estático
-    dados2 = pd.read_excel('Dados/VRP_Spreadsheet_Solver_correta_Modelo.xlsm',sheet_name="1. Locais")
+    dados2 = pd.read_excel('Dados/VRP_Spreadsheet_Solver_6Ps.xlsm',sheet_name="1. Locais")
     i = 0
     
     #foi coletado todos os dados da garagem e dos locais
@@ -72,7 +72,7 @@ def GetVertexData():
 vertex_list = GetVertexData()
 
 def GetArcData():
-    dados = pd.read_excel('Dados/VRP_Spreadsheet_Solver_correta_Modelo.xlsm',sheet_name="2. Distâncias")
+    dados = pd.read_excel('Dados/VRP_Spreadsheet_Solver_6Ps.xlsm',sheet_name="2. Distâncias")
     
     #para ver onde ser foram preenchido os dados
     arc_list = Arc_Data()
@@ -103,7 +103,7 @@ arc_list = GetArcData()
 
 def GetInstanceData():
 
-    dados = pd.read_excel('Dados/VRP_Spreadsheet_Solver_correta_Modelo.xlsm',sheet_name="VRP Solver Console")
+    dados = pd.read_excel('Dados/VRP_Spreadsheet_Solver_6Ps.xlsm',sheet_name="VRP Solver Console")
     
     # Para instance que os dados vão
     instance = Instance_Data()
@@ -138,7 +138,7 @@ def GetInstanceData():
 
     #https://www.knowledgehut.com/blog/programming/how-to-work-with-excel-using-python
     #https://living-sun.com/pt/python/710241-python-validate-if-a-sheet-exists-in-my-document-xls-python-xls.html
-    Compat_vehicle = load_workbook(filename="Dados/VRP_Spreadsheet_Solver_correta_Modelo.xlsm", read_only=True)   # open an Excel file and return a workbook
+    Compat_vehicle = load_workbook(filename="Dados/VRP_Spreadsheet_Solver_6Ps.xlsm", read_only=True)   # open an Excel file and return a workbook
     
     if '3.1. Compatibilidade do veículo' in Compat_vehicle.sheetnames:
         instance.vehicle_location_incompatibility = True
@@ -165,7 +165,7 @@ def GetVehicleTypeData():
     d= 0
     #base_vehicle_types = 0
 
-    dados = pd.read_excel('Dados/VRP_Spreadsheet_Solver_correta_Modelo.xlsm',sheet_name="VRP Solver Console")
+    dados = pd.read_excel('Dados/VRP_Spreadsheet_Solver_6Ps.xlsm',sheet_name="VRP Solver Console")
 
     #para saber de onde vem os dados
     vehicle_type_list = Vehicle_Type_List_Data()
@@ -179,7 +179,7 @@ def GetVehicleTypeData():
     vehicle_type_list.num_vehicle_types = base_vehicle_types * vertex_list.num_depots
     
     #https://question-it.com/questions/2208822/ignorirovat-userwarning-ot-openpyxl-s-pomoschju-pandas  
-    dados2 = pd.read_excel('Dados/VRP_Spreadsheet_Solver_correta_Modelo.xlsm',sheet_name="3. Veículos")
+    dados2 = pd.read_excel('Dados/VRP_Spreadsheet_Solver_6Ps.xlsm',sheet_name="3. Veículos")
 
     #capacity, fixed_cost_per_trip, cost_per_unit_distance, duration_multiplier, number_available, work_start_time, 
     # distance_limit, driving_time_limit, working_time_limit, origin_base_id, return_base_id, type_id
@@ -217,7 +217,7 @@ def GetVehicleTypeData():
     instance =  GetInstanceData()
     
     if instance.vehicle_location_incompatibility == True:
-        dados3 = pd.read_excel('Dados/VRP_Spreadsheet_Solver_correta_Modelo.xlsm',sheet_name="3.1. Compatibilidade do veículo")
+        dados3 = pd.read_excel('Dados/VRP_Spreadsheet_Solver_6Ps.xlsm',sheet_name="3.1. Compatibilidade do veículo")
         vehicle_type_list.compatible = np.zeros((vertex_list.num_locations, vehicle_type_list.num_vehicle_types), dtype ='int16')
         for i in range(0, vertex_list.num_locations):
             k=0
@@ -290,7 +290,7 @@ instance = DeterminePenalty()
 
 
 def GetSolverOptions():
-    dados = pd.read_excel('Dados/VRP_Spreadsheet_Solver_correta_Modelo.xlsm',sheet_name="VRP Solver Console")
+    dados = pd.read_excel('Dados/VRP_Spreadsheet_Solver_6Ps.xlsm',sheet_name="VRP Solver Console")
 
     #retorna solver_options
     solver_options = Solver_Option_Data()

@@ -69,7 +69,7 @@ DP_list = InitializeDP()
 
 ##!!!!!!!!!!Depois colocar parametro solution = Solution_Data()!!!!!!!!!!!
 def ReadSolution(solution):
-    dados = pd.read_excel('Dados/VRP_Spreadsheet_Solver_correta_Modelo.xlsm',sheet_name="4. Solução")
+    dados = pd.read_excel('Dados/VRP_Spreadsheet_Solver_6Ps.xlsm',sheet_name="4. Solução")
 
     i = 0
     j = 0
@@ -120,6 +120,7 @@ def AddVertex(solution, vertex_to_be_added, vehicle_type_index, vehicle_id, posi
     #solution = InitializeSolution(solution)
 
     #.vertices_visited(vertex_to_be_added) = .vertices_visited(vertex_to_be_added) + 1
+    
     solution.vertices_visited[vertex_to_be_added] += 1
 
     #print(solution.vertices_visited[vertex_to_be_added])
@@ -136,19 +137,23 @@ def AddVertex(solution, vertex_to_be_added, vehicle_type_index, vehicle_id, posi
     #Sistema para começar da posição 1 e não da 0
     #print(position-1)
     #print(position)
-    for i in range(rota_do_vertice_cnt, position, -1):#perguntar
-    #.route_vertices(vehicle_type_index, vehicle_id, i + 1) = .route_vertices(vehicle_type_index, vehicle_id, i) -> perguntar
-        solution.route_vertices[i, vehicle_type_index, vehicle_id] = solution.route_vertices[i-1, vehicle_type_index, vehicle_id]
-    #b,l,c = shape(solution.route_vertices)
-    #aux = np.zeros((b,l,c), dtype='int32')
-    #aux2= np.concatenate()  #solution.route_vertices[:-1,:,:] = aux
-    #print(i)
-        
+    if position < 6:
 
-    
-    #dimensão, linha e coluna
-    solution.route_vertices[position, vehicle_type_index, vehicle_id] = vertex_to_be_added
-    
+        for i in range(rota_do_vertice_cnt, position, -1):#perguntar
+        #.route_vertices(vehicle_type_index, vehicle_id, i + 1) = .route_vertices(vehicle_type_index, vehicle_id, i) -> perguntar
+            solution.route_vertices[i, vehicle_type_index, vehicle_id] = solution.route_vertices[i-1, vehicle_type_index, vehicle_id]
+        #b,l,c = shape(solution.route_vertices)
+        #aux = np.zeros((b,l,c), dtype='int32')
+        #aux2= np.concatenate()  #solution.route_vertices[:-1,:,:] = aux
+        #print(i)
+            
+
+        
+        #dimensão, linha e coluna
+        solution.route_vertices[position, vehicle_type_index, vehicle_id] = vertex_to_be_added
+        print(position)
+    else:
+        print("resolver")
     #print(solution.route_vertices[4, vehicle_type_index, vehicle_id])
     #.route_vertex_cnt(vehicle_type_index, vehicle_id) = .route_vertex_cnt(vehicle_type_index, vehicle_id) + 1
 

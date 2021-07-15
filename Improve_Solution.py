@@ -287,7 +287,7 @@ def ImproveSolution(solution):
                                     midpoint_for_chain_reversal = ((solution.route_vertex_cnt[i, j] -1) - (k + 1)) / 2
         
                                     #For vertex = 0 To midpoint_for_chain_reversal
-                                    for vertex in range(0, midpoint_for_chain_reversal +1):
+                                    for vertex in range(0, int(midpoint_for_chain_reversal +1)):
                                         vertex_to_swap = solution.route_vertices[k + 1 + vertex, i, j]
                                         #solution.route_vertices[k + 1 + vertex, i, j] = solution.route_vertices[solution.route_vertex_cnt[i, j] - vertex, i, j] #anterior
                                         solution.route_vertices[k + 1 + vertex, i, j] = solution.route_vertices[(solution.route_vertex_cnt[i, j] -1) - vertex, i, j]
@@ -330,7 +330,7 @@ def ImproveSolution(solution):
                                     midpoint_for_chain_reversal = ((solution.route_vertex_cnt[a, b] -1) - (c + 1)) / 2
         
                                     #For vertex = 0 To midpoint_for_chain_reversal # verificar
-                                    for vertex in range(0, midpoint_for_chain_reversal +1):
+                                    for vertex in range(0, int(midpoint_for_chain_reversal +1)):
                                         vertex_to_swap = solution.route_vertices[c + 1 + vertex, a, b]
                                         #solution.route_vertices[c + 1 + vertex, a, b] = solution.route_vertices[solution.route_vertex_cnt[a, b] - vertex, a, b]#anterior
                                         #solution.route_vertices[solution.route_vertex_cnt[a, b] - vertex, a, b] = vertex_to_swap #anterior
@@ -374,7 +374,7 @@ def ImproveSolution(solution):
                                     midpoint_for_chain_reversal = ((solution.route_vertex_cnt[i, j] -1) - (k + 1)) / 2
         
                                     #For vertex = 0 To midpoint_for_chain_reversal
-                                    for vertex in range(0, midpoint_for_chain_reversal +1):
+                                    for vertex in range(0, int(midpoint_for_chain_reversal +1)):
                                         vertex_to_swap = solution.route_vertices[k + 1 + vertex, i, j]
                                         solution.route_vertices[k + 1 + vertex, i, j] = solution.route_vertices[(solution.route_vertex_cnt[i, j] -1) - vertex, i, j]
                                         solution.route_vertices[(solution.route_vertex_cnt[i, j] -1) - vertex, i, j] = vertex_to_swap
@@ -416,7 +416,7 @@ def ImproveSolution(solution):
                                     midpoint_for_chain_reversal = ((solution.route_vertex_cnt[a, b] -1) - (c + 1)) / 2
         
                                     #For vertex = 0 To midpoint_for_chain_reversal
-                                    for vertex in range(0, midpoint_for_chain_reversal +1):
+                                    for vertex in range(0, int(midpoint_for_chain_reversal +1)):
                                         vertex_to_swap = solution.route_vertices[c + 1 + vertex, a, b]
                                         #anterior
                                         #solution.route_vertices[c + 1 + vertex, a, b] = solution.route_vertices[solution.route_vertex_cnt[a, b] - vertex, a, b]
