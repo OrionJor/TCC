@@ -779,7 +779,7 @@ def EvaluateRouteSingleTrip(solution, vehicle_type_index, vehicle_id):
             delivery_amount = delivery_amount - vertex_list.vertices[this_vertex].DeliveryAmount
 
 
-            if pickup_amount + delivery_amount > vehicle_type_list.vehicle_types[vehicle_type_index].capacity:
+            if (pickup_amount + delivery_amount) > vehicle_type_list.vehicle_types[vehicle_type_index].capacity:
                 feasibility_flag = False
                 solution.feasible = False
                 net_profit_this_route = net_profit_this_route - instance.penalty * ((((pickup_amount + delivery_amount) / (vehicle_type_list.vehicle_types[vehicle_type_index].capacity + epsilon)) ^ 2) - 1)

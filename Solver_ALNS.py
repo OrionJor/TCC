@@ -4,7 +4,7 @@ from Get_m import *
 from Improve_Solution import *
 from Flesibility import *
 from datetime import datetime
-from random import randrange, randint
+from random import randint
 import random
 import gc #limpar memória
 
@@ -76,7 +76,7 @@ def VRP_Solver():
 
     #cria os vetores de vértes e swap
     vertex = 0 #->tipo inteiro
-    vertex_to_swap = None #->tipo inteiro
+    vertex_to_swap = 0 #->tipo inteiro
 
     #criar o vetor, vetor para swap, adicionar o tipo de veículo, id veículo e a posição
     vertex_to_be_added = 0 #-> tipo inteiro
@@ -90,24 +90,24 @@ def VRP_Solver():
     max_net_profit = 0 #tipo double
     min_total_distance = 0 #tipo double
     max_mandatory = 0    #tipo int
-    max_secondary_profit = None #tipo double
+    max_secondary_profit = 0 #tipo double
 
     #cirar cluster_core -> número de cluster, distance_to_farthest_customer -> distância para o cliente mais distânte,
     #cluster_diameter -> diâmetro do cluter, capacity_used -> capacidade usada
-    cluster_core = None #tipo inteiro
-    distance_to_farthest_customer = None #tipo double
-    cluster_diameter = None #tipo double
-    capacity_used = None #tipo dolble
+    cluster_core = -1 #tipo inteiro
+    distance_to_farthest_customer = 0 #tipo double
+    cluster_diameter = 0 #tipo double
+    capacity_used = -1 #tipo dolble
 
     #cria removal_rate -> taxa de remoção, insertion_heuristic -> heurística de inserção
-    removal_rate = None #tipo double
-    insertion_heuristic = None #tipo double
+    removal_rate = 0 #tipo double
+    insertion_heuristic = 0 #tipo double
 
     #cria start_time -> hora de início, end_tipo -> hora de fim, time_elapsed -> tempo percorrido
 
-    start_time = None #tipo date
-    end_time = None #tipo date
-    time_elapsed = None #tipo double
+    start_time = 0 #tipo date
+    end_time = 0 #tipo date
+    time_elapsed = 0 #tipo double
 
 
     #infeasibility check -> verificar de inviabilidade com o contador e com string 
@@ -257,14 +257,14 @@ def VRP_Solver():
 
     #2nd constructive heuristic
     #2ª heurística construtiva
-    '''
-    InitializeSolution(incumbent) #chama a função InitializeSolution
+ 
+    incumbent = InitializeSolution()#chama a função InitializeSolution
 
     #For i = 1 To vehicle_type_list.num_vehicle_types
     for i in range(0, vehicle_type_list.num_vehicle_types):
-        for j in range(0, vehicle_type_list.num_vehicle_types[i].NumberAvailable): #número de veiculos
+        for j in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable): #número de veiculos
             #tipo de veículo list.tipos_veículos (in). número disponível
-
+            #Criar o cluster
             cluster_core = -1
             capacity_used = 0
 
@@ -273,43 +273,43 @@ def VRP_Solver():
             #For k = vertex_list.num_depots + 1 To vertex_list.num_locations
             for k in range(vertex_list.num_depots, vertex_list.num_locations):
                 #arc_list.distance -> é um vetor.
-                if(arc_list.distance[vehicle_type_list.vehicle_types[i].OriginBaseId, k] + arc_list.distance[k, vehicle_type_list.vehicle_types[i].ReturnBaseId] > cluster_diameter) and (vertex_list.vertices[k].mandadory >= 0) and (incumbent.vertices_visited[k] == 0):
+                if(arc_list.distance[vehicle_type_list.vehicle_types[i].OriginBaseId, k] + arc_list.distance[k, vehicle_type_list.vehicle_types[i].ReturnBaseId] > cluster_diameter) and (vertex_list.vertices[k].mandatory >= 0) and (incumbent.vertices_visited[k] == 0):
                     distance_to_farthest_customer = arc_list.distance[vehicle_type_list.vehicle_types[i].OriginBaseId, k] + arc_list.distance[k, vehicle_type_list.vehicle_types[i].ReturnBaseId]
                     cluster_core = k
             
             if cluster_core != -1:
-                #AddVertex(incumbent, cluster_core, i, j, 1)# resolver essa parada
-                AddVertex(incumbent, cluster_core, i, j, 1)
-                capacity_used = (-1 * (vertex_list.vertices[cluster_core].PickupAmount + vertex_list.vertices[cluster_core].DeliveryAmount))
+                #AddVertex(incumbent, cluster_core, i, j, 1)# anterior
+                AddVertex(incumbent, cluster_core, i, j, 0)
+                capacity_used =  abs(vertex_list.vertices[cluster_core].PickupAmount + vertex_list.vertices[cluster_core].DeliveryAmount)
 
 
                 while True:
 
                     vertex_to_be_added = -1
-                    cluster_diameter = (arc_list.distance[vehicle_type_list.vehicle_types[i].OriginBaseId, cluster_core] + arc_list.distance[cluster_core, vehicle_type_list.vehicle_types[i].return_base_id]) / 2
+                    cluster_diameter = (arc_list.distance[vehicle_type_list.vehicle_types[i].OriginBaseId, cluster_core] + arc_list.distance[cluster_core, vehicle_type_list.vehicle_types[i].ReturnBaseId]) / 2
 
                     #For k = vertex_list.num_depots + 1 To vertex_list.num_locations
                     for k in range(vertex_list.num_depots, vertex_list.num_locations):
 
-                        if(arc_list.distance[cluster_core, k] + arc_list.distance[k, cluster_core] < cluster_diameter) and (capacity_used + vertex_list.vertices[k].pickup_amount <= vehicle_type_list.vehicle_types[i].capacity) and (vertex_list.vertices[k].mandatory >= 0) and (incumbent.vertices_visited[k] == 0):
+                        if(arc_list.distance[cluster_core, k] + arc_list.distance[k, cluster_core] < cluster_diameter) and (capacity_used + vertex_list.vertices[k].PickupAmount <= vehicle_type_list.vehicle_types[i].capacity) and (vertex_list.vertices[k].mandatory >= 0) and (incumbent.vertices_visited[k] == 0):
                             
                             cluster_diameter = arc_list.distance[cluster_core, k] + arc_list.distance[k, cluster_core]
                             vertex_to_be_added = k
 
                         if vertex_to_be_added != -1:
-                            #AddVertex(incumbent, vertex_to_be_added, i, j, incumbent.route_vertex_cnt[i, j] + 1) resolver essa parada
-                            AddVertex(incumbent, vertex_to_be_added, i, j, incumbent.route_vertex_cnt[i, j])
+                            #AddVertex(incumbent, vertex_to_be_added, i, j, incumbent.route_vertex_cnt[i, j] + 1) anterior
+                            AddVertex(incumbent, vertex_to_be_added, i, j, (incumbent.route_vertex_cnt[i, j]))
                             capacity_used = capacity_used + vertex_list.vertices[vertex_to_be_added].PickupAmount
 
                     #Do while
-                    if vertex_to_be_added != -1:
+                    if vertex_to_be_added == -1:
                         break
                 
                 ImproveSolution(incumbent)
 
     while True:
         
-        vehicle_id_to_add = -1
+        vertex_to_be_added = -1
         max_net_profit = incumbent.net_profit - instance.penalty
         min_total_distance = incumbent.total_distance
         max_mandatory = 0
@@ -339,10 +339,10 @@ def VRP_Solver():
 
                                     max_net_profit = incumbent.net_profit
                                     min_total_distance = incumbent.total_distance
-                                    max_mandatory = vertex_list.vertices[vertex].madatory
+                                    max_mandatory = vertex_list.vertices[vertex].mandatory
                                     vertex_to_be_added = vertex
                                     vehicle_type_to_add_to = i
-                                    vehicle_id_to_add = j
+                                    vehicle_id_to_add_to = j
                                     positon_to_add_to = k
 
                                 RemoveVertex(incumbent, i, j, k)
@@ -360,17 +360,18 @@ def VRP_Solver():
 
                                     max_net_profit = incumbent.net_profit
                                     min_total_distance = incumbent.total_distance
-                                    max_mandatory = vertex_list.vertices[vertex].madatory
+                                    max_mandatory = vertex_list.vertices[vertex].mandatory
                                     vertex_to_be_added = vertex
                                     vehicle_type_to_add_to = i
-                                    vehicle_id_to_add = j
+                                    vehicle_id_to_add_to = j
                                     positon_to_add_to = k
 
                                 RemoveVertex(incumbent, i, j, k)
 
 
-        if vehicle_id_to_add != -1:
-            AddVertex(incumbent, vertex_to_be_added, vertex_to_be_added, positon_to_add_to)
+        if vertex_to_be_added != -1:
+            #Call AddVertex(incumbent, vertex_to_be_added, vehicle_type_to_add_to, vehicle_id_to_add_to, position_to_add_to)
+            AddVertex(incumbent, vertex_to_be_added, vehicle_type_to_add_to, vehicle_type_to_add_to, positon_to_add_to)
 
             #end_time = Now
             #print "Added vertex: " & vertex_to_be_added & " obj: " & incumbent.net_profit
@@ -391,7 +392,7 @@ def VRP_Solver():
             best_known = incumbent
         
         #Do While
-        if vehicle_id_to_add != -1: #se ainda tiver vetor continua -> vertex_to_be_added diferente de -1  e se não tiver para 
+        if vertex_to_be_added == -1: #se ainda tiver vetor continua -> vertex_to_be_added diferente de -1  e se não tiver para 
             break
 
     ImproveSolution(incumbent)
@@ -409,19 +410,19 @@ def VRP_Solver():
     #improvement phase
     #fase de melhoria
 
-    print("LNS algorithm running...")
-
+    print("Algoritmo LNS em execução ...")
+    #aqui inicia a meta-heuristica
     iteration = 0
 
     while True:
 
         if solver_options.status_updates == True:
-            print("Starting LNS iteration ",  iteration, ". Best total net profit so far: ", best_known.net_profit)
+            print("Iniciando a iteração LNS ",  iteration, ". Melhor lucro líquido total até agora:", best_known.net_profit)
 
         #https://docs.python.org/pt-br/3.7/library/random.html ->Funções para inteiros random.randrange
         #https://pynative.com/python-random-randrange/
         #https://pense-python.caravela.club/13-estudo-de-caso-selecao-de-estrutura-de-dados/02-numeros-aleatorios.html
-        removal_rate = solver_options.LNS_minimum_removal_rate + (randrange(solver_options.LNS_maximum_removal_rate, solver_options.LNS_minimum_removal_rate, -1))
+        removal_rate = solver_options.LNS_minimum_removal_rate + ((solver_options.LNS_maximum_removal_rate - solver_options.LNS_minimum_removal_rate) * random.random())
 
         #removal_rate = solver_options.LNS_minimum_removal_rate + (((time_elapsed) / solver_options.CPU_time_limit) * (solver_options.LNS_maximum_removal_rate - solver_options.LNS_minimum_removal_rate))
         #taxa de remoção = opções do solucionador. Taxa mínima de remoção do LNS + (((tempo decorrido) / opções do solucionador. Limite de tempo da CPU) * (opções do solucionador. Taxa máxima de remoção do LNS - opções do solucionador. Taxa mínima de remoção do LNS))
@@ -435,7 +436,7 @@ def VRP_Solver():
                 #For k = 1 To incumbent.route_vertex_cnt(i, j)
                 for k in range(0, incumbent.route_vertex_cnt[i, j]):
                     
-                    if k <= incumbent.route_vertex_cnt[i, j]:
+                    if k <= (incumbent.route_vertex_cnt[i, j] - 1):
                         
                         random_removal_rate = random.random() #taxa_aleatoria_remoção entre 0 e 1
                         if random_removal_rate < removal_rate:
@@ -483,7 +484,7 @@ def VRP_Solver():
                                     max_mandatory = vertex_list.vertices[vertex].mandatory
                                     vertex_to_be_added = vertex
                                     vehicle_type_to_add_to = i
-                                    vehicle_id_to_add = j
+                                    vehicle_id_to_add_to = j
                                     positon_to_add_to = k
 
                                 elif ((vertex_list.vertices[vertex].mandatory == max_mandatory) and (incumbent.net_profit > max_secondary_profit + epsilon)):
@@ -497,7 +498,7 @@ def VRP_Solver():
                         candidate_count = candidate_count + 1
 
                         if insertion_heuristic == 2 or max_mandatory == 0:
-                            candidate_list[candidate_count].NetProfit = (-1 * (max_secondary_profit - max_net_profit))
+                            candidate_list[candidate_count].NetProfit =  abs(max_secondary_profit - max_net_profit)
                         
                         else:
                             candidate_list[candidate_count].NetProfit = max_net_profit
@@ -543,7 +544,7 @@ def VRP_Solver():
 
                 
                 #k = Application.WorksheetFunction.RandBetween(1, final_candidate_count)
-                k = randint(0, final_candidate_count)
+                k = randint(1, final_candidate_count)
                 
                 vertex_to_be_added = candidate_list[k].vertex_to_be_addeb
                 vehicle_type_to_add_to = candidate_list[k].vehicle_type_index
@@ -564,7 +565,7 @@ def VRP_Solver():
                 best_known = incumbent
 
             #Do While2
-            if candidate_count > 0:
+            if candidate_count < 0:
                 break
 
         #print "Before polishing: " & incumbent.net_profit & " " & incumbent.feasible & " " & iteration
@@ -586,7 +587,7 @@ def VRP_Solver():
             best_known = incumbent
 
 
-        elif incumbent.net_profit < best_known.net_profit - 0.1 * (1 - (time_elapsed / solver_options.CPU_time_limit)) * (-1 *(best_known.net_profit)): #If random() < 0.5 Then
+        elif incumbent.net_profit < best_known.net_profit - 0.1 * (1 - (time_elapsed / solver_options.CPU_time_limit)) * abs(best_known.net_profit): #If random() < 0.5 Then
 
             incumbent = best_known
             EvaluateSolution(incumbent)
@@ -600,7 +601,7 @@ def VRP_Solver():
         #print "Iterations performed: " & iteration
 
 
-    #Solver_ALNS_finiah
+    #Solver ALNS Terminar
     #squeeze the solution # aperte a solução
 
     #For i = 1 To vehicle_type_list.num_vehicle_types
@@ -620,7 +621,7 @@ def VRP_Solver():
 
                     k = k +1
 
-                    if (l == -1) and (k <= vehicle_type_list.vehicle_types[i].NumberAvailable):
+                    if (l != -1) and (k > vehicle_type_list.vehicle_types[i].NumberAvailable):
                         break
 
                 if l != -1:
@@ -634,8 +635,6 @@ def VRP_Solver():
     EvaluateSolution(best_known)
 
     #write the solution
-    print(best_known.net_profit)
-
     #print best_known.net_profit
 
     if best_known.feasible == True:
@@ -668,6 +667,6 @@ def VRP_Solver():
     
     gc.collect()
 
-    '''
+
 
 VRP_Solver()
