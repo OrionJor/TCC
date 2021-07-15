@@ -424,7 +424,7 @@ def EvaluateRouteMultiTrip(solution, vehicle_type_index, vehicle_id):
                 if total_pickup_load < -epsilon:
                     feasibility_flag = False
                     solution.feasible = False
-                    net_profit_this_route = net_profit_this_route - instance.penalty * ((((-total_pickup_load) / (vehicle_capacity + epsilon) + 1) ^ 2) - 1)
+                    net_profit_this_route = net_profit_this_route - instance.penalty * ((((-total_pickup_load) / (vehicle_capacity + epsilon) + 1) ** 2) - 1)
                         
 
                 if min_residual_capacity > vehicle_capacity - total_pickup_load:
@@ -434,7 +434,7 @@ def EvaluateRouteMultiTrip(solution, vehicle_type_index, vehicle_id):
                 if min_residual_capacity < -epsilon:
                     feasibility_flag = False
                     solution.feasible = False
-                    net_profit_this_route = net_profit_this_route - instance.penalty * ((((-min_residual_capacity) / (vehicle_capacity + epsilon) + 1) ^ 2) - 1)
+                    net_profit_this_route = net_profit_this_route - instance.penalty * ((((-min_residual_capacity) / (vehicle_capacity + epsilon) + 1) ** 2) - 1)
                         
 
                 net_profit_this_route = net_profit_this_route + vertex_list.vertices[this_vertex].profit
@@ -488,7 +488,7 @@ def EvaluateRouteMultiTrip(solution, vehicle_type_index, vehicle_id):
                         feasibility_flag = False
                         solution.feasible = False
                             
-                    net_profit_this_route = net_profit_this_route - instance.penalty * (((time_accumulated / vertex_list.vertices[this_vertex].TimeWindowsEnd) ^ 2) - 1)
+                    net_profit_this_route = net_profit_this_route - instance.penalty * (((time_accumulated / vertex_list.vertices[this_vertex].TimeWindowsEnd) ** 2) - 1)
                         
 
             
@@ -514,25 +514,25 @@ def EvaluateRouteMultiTrip(solution, vehicle_type_index, vehicle_id):
             feasibility_flag = False
             solution.feasible = False
      
-        net_profit_this_route = net_profit_this_route - instance.penalty * (((time_accumulated / vertex_list.vertices[return_base_id].TimeWindowsEnd) ^ 2) - 1)
+        net_profit_this_route = net_profit_this_route - instance.penalty * (((time_accumulated / vertex_list.vertices[return_base_id].TimeWindowsEnd) ** 2) - 1)
  
                 
     if distance_traversed > vehicle_type_list.vehicle_types[vehicle_type_index].DistanceLimit:
         feasibility_flag = False
         solution.feasible = False
-        net_profit_this_route = net_profit_this_route - instance.penalty * (((distance_traversed / vehicle_type_list.vehicle_types[vehicle_type_index].DistanceLimit) ^ 2) - 1)
+        net_profit_this_route = net_profit_this_route - instance.penalty * (((distance_traversed / vehicle_type_list.vehicle_types[vehicle_type_index].DistanceLimit) ** 2) - 1)
  
 
     if driving_time_total > vehicle_type_list.vehicle_types[vehicle_type_index].DrivingTimeLimit:
         feasibility_flag = False
         solution.feasible = False
-        net_profit_this_route = net_profit_this_route - instance.penalty * (((driving_time_total / vehicle_type_list.vehicle_types[vehicle_type_index].DrivingTimeLimit) ^ 2) - 1)
+        net_profit_this_route = net_profit_this_route - instance.penalty * (((driving_time_total / vehicle_type_list.vehicle_types[vehicle_type_index].DrivingTimeLimit) ** 2) - 1)
  
 
     if working_time_total > vehicle_type_list.vehicle_types[vehicle_type_index].WorkingTimeLimit:
         feasibility_flag = False
         solution.feasible = False
-        net_profit_this_route = net_profit_this_route - instance.penalty * (((working_time_total / vehicle_type_list.vehicle_types[vehicle_type_index].WorkingTimeLimit) ^ 2) - 1)
+        net_profit_this_route = net_profit_this_route - instance.penalty * (((working_time_total / vehicle_type_list.vehicle_types[vehicle_type_index].WorkingTimeLimit) ** 2) - 1)
  
 
 
@@ -591,7 +591,7 @@ def NextStage(solution, vehicle_type_index, vehicle_id, stage, vehicle_capacity,
             if total_pickup_load < -epsilon:
                 feasibility_flag = False
                 solution.feasible = False
-                net_profit_this_route = net_profit_this_route - instance.penalty * ((((-total_pickup_load) / (vehicle_capacity + epsilon) + 1) ^ 2) - 1)
+                net_profit_this_route = net_profit_this_route - instance.penalty * ((((-total_pickup_load) / (vehicle_capacity + epsilon) + 1) ** 2) - 1)
                         
 
             if min_residual_capacity > vehicle_capacity - total_pickup_load:
@@ -601,7 +601,7 @@ def NextStage(solution, vehicle_type_index, vehicle_id, stage, vehicle_capacity,
             if min_residual_capacity < -epsilon:
                 feasibility_flag = False
                 solution.feasible = False
-                net_profit_this_route = net_profit_this_route - instance.penalty * ((((-min_residual_capacity) / (vehicle_capacity + epsilon) + 1) ^ 2) - 1)
+                net_profit_this_route = net_profit_this_route - instance.penalty * ((((-min_residual_capacity) / (vehicle_capacity + epsilon) + 1) ** 2) - 1)
                         
 
             net_profit_this_route = net_profit_this_route + vertex_list.vertices[this_vertex].profit
@@ -655,7 +655,7 @@ def NextStage(solution, vehicle_type_index, vehicle_id, stage, vehicle_capacity,
                     feasibility_flag = False
                     solution.feasible = False
                             
-                net_profit_this_route = net_profit_this_route - instance.penalty * (((time_accumulated / vertex_list.vertices[this_vertex].TimeWindowsEnd) ^ 2) - 1)
+                net_profit_this_route = net_profit_this_route - instance.penalty * (((time_accumulated / vertex_list.vertices[this_vertex].TimeWindowsEnd) ** 2) - 1)
                         
 
             
@@ -681,25 +681,25 @@ def NextStage(solution, vehicle_type_index, vehicle_id, stage, vehicle_capacity,
             feasibility_flag = False
             solution.feasible = False
      
-        net_profit_this_route = net_profit_this_route - instance.penalty * (((time_accumulated / vertex_list.vertices[return_base_id].TimeWindowsEnd) ^ 2) - 1)
+        net_profit_this_route = net_profit_this_route - instance.penalty * (((time_accumulated / vertex_list.vertices[return_base_id].TimeWindowsEnd) ** 2) - 1)
  
                 
     if distance_traversed > vehicle_type_list.vehicle_types[vehicle_type_index].DistanceLimit:
         feasibility_flag = False
         solution.feasible = False
-        net_profit_this_route = net_profit_this_route - instance.penalty * (((distance_traversed / vehicle_type_list.vehicle_types[vehicle_type_index].DistanceLimit) ^ 2) - 1)
+        net_profit_this_route = net_profit_this_route - instance.penalty * (((distance_traversed / vehicle_type_list.vehicle_types[vehicle_type_index].DistanceLimit) ** 2) - 1)
  
 
     if driving_time_total > vehicle_type_list.vehicle_types[vehicle_type_index].DrivingTimeLimit:
         feasibility_flag = False
         solution.feasible = False
-        net_profit_this_route = net_profit_this_route - instance.penalty * (((driving_time_total / vehicle_type_list.vehicle_types[vehicle_type_index].DrivingTimeLimit) ^ 2) - 1)
+        net_profit_this_route = net_profit_this_route - instance.penalty * (((driving_time_total / vehicle_type_list.vehicle_types[vehicle_type_index].DrivingTimeLimit) ** 2) - 1)
  
 
     if working_time_total > vehicle_type_list.vehicle_types[vehicle_type_index].WorkingTimeLimit:
         feasibility_flag = False
         solution.feasible = False
-        net_profit_this_route = net_profit_this_route - instance.penalty * (((working_time_total / vehicle_type_list.vehicle_types[vehicle_type_index].WorkingTimeLimit) ^ 2) - 1)
+        net_profit_this_route = net_profit_this_route - instance.penalty * (((working_time_total / vehicle_type_list.vehicle_types[vehicle_type_index].WorkingTimeLimit) ** 2) - 1)
  
 
 
@@ -762,7 +762,7 @@ def EvaluateRouteSingleTrip(solution, vehicle_type_index, vehicle_id):
             
             feasibility_flag = False
             solution.feasible = False
-            net_profit_this_route = net_profit_this_route - instance.penalty * (((delivery_amount / (vehicle_type_list.vehicle_types[vehicle_type_index].capacity + epsilon)) ^ 2) - 1)
+            net_profit_this_route = net_profit_this_route - instance.penalty * (((delivery_amount / (vehicle_type_list.vehicle_types[vehicle_type_index].capacity + epsilon)) ** 2) - 1)
 
         #For k = 1 To .route_vertex_cnt(vehicle_type_index, vehicle_id)
         for k in range(0, solution.route_vertex_cnt[vehicle_type_index, vehicle_id]):
@@ -782,14 +782,14 @@ def EvaluateRouteSingleTrip(solution, vehicle_type_index, vehicle_id):
             if (pickup_amount + delivery_amount) > vehicle_type_list.vehicle_types[vehicle_type_index].capacity:
                 feasibility_flag = False
                 solution.feasible = False
-                net_profit_this_route = net_profit_this_route - instance.penalty * ((((pickup_amount + delivery_amount) / (vehicle_type_list.vehicle_types[vehicle_type_index].capacity + epsilon)) ^ 2) - 1)
+                net_profit_this_route = net_profit_this_route - instance.penalty * ((((pickup_amount + delivery_amount) / (vehicle_type_list.vehicle_types[vehicle_type_index].capacity + epsilon)) ** 2) - 1)
            
             
             
             if pickup_amount < 0:
                 feasibility_flag = False
                 solution.feasible = False
-                net_profit_this_route = net_profit_this_route - instance.penalty * ((( (abs(pickup_amount)) / (vehicle_type_list.vehicle_types[vehicle_type_index].capacity + epsilon)) ^ 2) + 1)
+                net_profit_this_route = net_profit_this_route - instance.penalty * ((( (abs(pickup_amount)) / (vehicle_type_list.vehicle_types[vehicle_type_index].capacity + epsilon)) ** 2) + 1)
 
                 
             net_profit_this_route = net_profit_this_route + vertex_list.vertices[this_vertex].profit
@@ -834,7 +834,7 @@ def EvaluateRouteSingleTrip(solution, vehicle_type_index, vehicle_id):
                 if instance.soft_time_windows == False:
                     feasibility_flag = False
                     solution.feasible = False
-                net_profit_this_route = net_profit_this_route - instance.penalty * (((time_accumulated / vertex_list.vertices[this_vertex].TimeWindowsEnd) ^ 2) - 1)
+                net_profit_this_route = net_profit_this_route - instance.penalty * (((time_accumulated / vertex_list.vertices[this_vertex].TimeWindowsEnd) ** 2) - 1)
 
 
         if instance.open_vrp == False:
@@ -855,22 +855,22 @@ def EvaluateRouteSingleTrip(solution, vehicle_type_index, vehicle_id):
                     feasibility_flag = False
                     solution.feasible = False
 
-                net_profit_this_route = net_profit_this_route - instance.penalty * (((time_accumulated / vertex_list.vertices[return_base_id].TimeWindowsEnd) ^ 2) - 1)
+                net_profit_this_route = net_profit_this_route - instance.penalty * (((time_accumulated / vertex_list.vertices[return_base_id].TimeWindowsEnd) ** 2) - 1)
 
         if distance_traversed > vehicle_type_list.vehicle_types[vehicle_type_index].DistanceLimit:
             feasibility_flag = False
             solution.feasible = False
-            net_profit_this_route = net_profit_this_route - instance.penalty * (((distance_traversed / vehicle_type_list.vehicle_types[vehicle_type_index].DistanceLimit) ^ 2) - 1)
+            net_profit_this_route = net_profit_this_route - instance.penalty * (((distance_traversed / vehicle_type_list.vehicle_types[vehicle_type_index].DistanceLimit) ** 2) - 1)
             
         if driving_time_total > vehicle_type_list.vehicle_types[vehicle_type_index].DrivingTimeLimit:
             feasibility_flag = False
             solution.feasible = False
-            net_profit_this_route = net_profit_this_route - instance.penalty * (((driving_time_total / vehicle_type_list.vehicle_types[vehicle_type_index].DrivingTimeLimit) ^ 2) - 1)
+            net_profit_this_route = net_profit_this_route - instance.penalty * (((driving_time_total / vehicle_type_list.vehicle_types[vehicle_type_index].DrivingTimeLimit) ** 2) - 1)
     
         if working_time_total > vehicle_type_list.vehicle_types[vehicle_type_index].WorkingTimeLimit:
             feasibility_flag = False
             solution.feasible = False
-            net_profit_this_route = net_profit_this_route - instance.penalty * (((working_time_total / vehicle_type_list.vehicle_types[vehicle_type_index].WorkingTimeLimit) ^ 2) - 1)
+            net_profit_this_route = net_profit_this_route - instance.penalty * (((working_time_total / vehicle_type_list.vehicle_types[vehicle_type_index].WorkingTimeLimit) ** 2) - 1)
 
     solution.total_distance_per_route[vehicle_type_index, vehicle_id] = total_distance_this_route
     solution.total_distance = solution.total_distance + total_distance_this_route
