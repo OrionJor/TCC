@@ -1,0 +1,7 @@
+MsgBox .feasible
+print(solution.feasible)
+MsgBox .covers_mandatory_vertices
+print(solution.covers_mandatory_vertices)
+MsgBox .total_distance
+print(solution.total_distance)
+MsgBox .net_profit_per_route(a, b)

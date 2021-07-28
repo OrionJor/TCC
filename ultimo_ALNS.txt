@@ -1,0 +1,297 @@
+while True:
+
+        vertex_to_be_added = -1 # número de vertice -> adicionado
+        #DeterminePenalty(instance)
+        
+        if instance.penalty == 0:
+            DeterminePenalty(instance)
+        
+        max_net_profit = incumbent.net_profit - instance.penalty #max de lucro - visitas
+        min_total_distance = incumbent.total_distance # total min de distância
+        max_mandatory = 0 # número maximo de vistas obrigatorias
+        #print(incumbent.net_profit)
+        #segundo loop número de depositos +1 até o número de locais
+        #vertex -> é uma posição
+
+
+        for vertex in range(vertex_list.num_depots, vertex_list.num_locations):
+            #vertex_list.vertices-> dados obtidos dos métodos GetVexdata, GetArcData, GetVeicle, GetSolver
+            
+ 
+            if(vertex_list.vertices[vertex].mandatory >= 0) and (incumbent.vertices_visited[vertex] == 0): #incumbent.vertices_visited[vertex] não tem nada
+
+                #For i = 1 To vehicle_type_list.num_vehicle_types
+                for i in range(0, vehicle_type_list.num_vehicle_types):
+                    #For j = 1 To vehicle_type_list.vehicle_types(i).number_available
+                    for j in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable):
+                        if j == 0:
+
+                            #vetor de nos com oirigem e destino
+                            #For k = 1 To incumbent.route_vertex_cnt(i, j) + 1
+                            for k in range(0, incumbent.route_vertex_cnt[i, j] +1):
+                                #adiciona o vetor e chama a função
+                                AddVertex(incumbent, vertex, i, j, k, instance.penalty)
+
+                                if(vertex_list.vertices[vertex].mandatory > max_mandatory) or (
+                                    (vertex_list.vertices[vertex].mandatory >= max_mandatory) and (incumbent.net_profit > max_net_profit + epsilon)) or (
+                                    (vertex_list.vertices[vertex].mandatory >= max_mandatory) and (incumbent.net_profit > max_net_profit - epsilon) and (incumbent.total_distance < min_total_distance - epsilon)):
+
+                                    max_net_profit = incumbent.net_profit
+                                    min_total_distance = incumbent.total_distance
+                                    max_mandatory = vertex_list.vertices[vertex].mandatory
+                                    vertex_to_be_added = vertex
+                                    vehicle_type_to_add_to = i
+                                    vehicle_id_to_add_to = j
+                                    position_to_add_to = k
+
+                                RemoveVertex(incumbent, i, j, k, instance.penalty)
+                        elif incumbent.route_vertex_cnt[i, j -1] > 0:
+
+                            #For k = 1 To incumbent.route_vertex_cnt(i, j) + 1
+                            for k in range(0, incumbent.route_vertex_cnt[i, j] + 1):
+                                
+                                AddVertex(incumbent, vertex, i, j, k, instance.penalty)
+
+                                if(vertex_list.vertices[vertex].mandatory > max_mandatory) or (
+                                    (vertex_list.vertices[vertex].mandatory >= max_mandatory) and (incumbent.net_profit > max_net_profit + epsilon)) or (
+                                    (vertex_list.vertices[vertex].mandatory >= max_mandatory) and (incumbent.net_profit > max_net_profit - epsilon) and (incumbent.total_distance < min_total_distance - epsilon)):
+
+                                    max_net_profit = incumbent.net_profit
+                                    min_total_distance = incumbent.total_distance
+                                    max_mandatory = vertex_list.vertices[vertex].mandatory
+                                    vertex_to_be_added = vertex
+                                    vehicle_type_to_add_to = i
+                                    vehicle_id_to_add_to = j
+                                    position_to_add_to = k
+
+                                RemoveVertex(incumbent, i, j, k, instance.penalty)
+
+        
+        if vertex_to_be_added != -1:
+            #AddVertex(incumbent, vertex_to_be_added, vehicle_type_to_add_to, vehicle_id_to_add_to, position_to_add_to)
+            AddVertex2(incumbent, vertex_to_be_added, vehicle_type_to_add_to, vehicle_id_to_add_to, position_to_add_to, instance.penalty)
+
+            #end_time = Now
+            #print "Added vertex: " & vertex_to_be_added & " obj: " & incumbent.net_profit
+            
+            #hora final = agora
+            #print "vértice adicionado:" & vértice a ser adicionado & "obj:" & lucro líquido incumbente
+
+        EvaluateSolution(incumbent)
+
+        #if ((incumbent.feasible == True) and (best_known.feasible == False)) or (
+            #(incumbent.covers_mandatory_vertices == True) and (best_known.covers_mandatory_vertices == False)) or (
+            #(incumbent.feasible == best_known.feasible) and (incumbent.net_profit > best_known.net_profit + epsilon)):
+        
+            #((titular viável = Verdadeiro) E (mais conhecido. viável = Falso)) Ou
+            #((titular cobre vértices obrigatórios = Verdadeiro) E (mais conhecido cobre vértices obrigatórios = Falso)) Ou
+            #((histórico viável = mais conhecido viável) E (lucro líquido histórico> lucro líquido mais conhecido + epsilon
+
+            #best_known = incumbent
+
+                        
+        if vertex_to_be_added == -1:
+            break
+    
+    #
+    #print(incumbent.feasible)
+
+
+    #if abs(best_known.net_profit - incumbent.net_profit) > epsilon:
+        #ImproveSolution(best_known, instance.penalty)
+        #ImproveSolution(incumbent, instance.penalty)
+    
+    #else:
+        #ImproveSolution(best_known, instance.penalty)
+
+    #for i in range(0, vehicle_type_list.num_vehicle_types):
+    #    #For j = 1 To vehicle_type_list.vehicle_types(i).number_available
+    #    for j in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable):
+    #        for k in range(0, incumbent.route_vertex_cnt[i,j]):
+    #            print(incumbent.route_vertices[k, i, j])
+
+    
+    #2nd constructive heuristic
+
+    #EvaluateSolution(incumbent)
+    #EvaluateSolution(best_known)
+
+    #Se o incumbent é a mais viável do que best_known então o best_known = incumbent
+    #if ((incumbent.feasible == True) and (best_known.feasible == False)) or (
+        #(incumbent.covers_mandatory_vertices == True) and (best_known.covers_mandatory_vertices == False)) or (
+        #(incumbent.feasible == best_known.feasible) and (incumbent.net_profit > best_known.net_profit + epsilon)):
+
+        #best_known = incumbent
+    
+    #print(incumbent.net_profit)
+    
+    incumbent = InitializeSolution()#chama a função InitializeSolution
+
+    #For i = 1 To vehicle_type_list.num_vehicle_types
+    for i in range(0, vehicle_type_list.num_vehicle_types):
+        for j in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable): #número de veiculos
+            #tipo de veículo list.tipos_veículos (in). número disponível
+            #Criar o cluster
+            cluster_core = -1
+            capacity_used = 0
+
+            distance_to_farthest_customer = 0
+            #distância para o cliente mais distante
+            #For k = vertex_list.num_depots + 1 To vertex_list.num_locations
+            for k in range(vertex_list.num_depots, vertex_list.num_locations):
+                #arc_list.distance -> é um vetor.
+                if(arc_list.distance[vehicle_type_list.vehicle_types[i].OriginBaseId, k] + arc_list.distance[k, vehicle_type_list.vehicle_types[i].ReturnBaseId] > cluster_diameter) and (vertex_list.vertices[k].mandatory >= 0) and (incumbent.vertices_visited[k] == 0):
+                    distance_to_farthest_customer = arc_list.distance[vehicle_type_list.vehicle_types[i].OriginBaseId, k] + arc_list.distance[k, vehicle_type_list.vehicle_types[i].ReturnBaseId]
+                    cluster_core = k
+            
+            if cluster_core != -1:
+                #AddVertex(incumbent, cluster_core, i, j, 1)# anterior
+                AddVertex(incumbent, cluster_core, i, j, 0, instance.penalty)
+                capacity_used =  abs(vertex_list.vertices[cluster_core].PickupAmount + vertex_list.vertices[cluster_core].DeliveryAmount)
+
+
+                while True:
+
+                    vertex_to_be_added = -1
+                    cluster_diameter = (arc_list.distance[vehicle_type_list.vehicle_types[i].OriginBaseId, cluster_core] + arc_list.distance[cluster_core, vehicle_type_list.vehicle_types[i].ReturnBaseId]) / 2
+
+                    #For k = vertex_list.num_depots + 1 To vertex_list.num_locations
+                    for k in range(vertex_list.num_depots, vertex_list.num_locations):
+
+                        if(arc_list.distance[cluster_core, k] + arc_list.distance[k, cluster_core] < cluster_diameter) and (capacity_used + vertex_list.vertices[k].PickupAmount <= vehicle_type_list.vehicle_types[i].capacity) and (vertex_list.vertices[k].mandatory >= 0) and (incumbent.vertices_visited[k] == 0):
+                            
+                            cluster_diameter = arc_list.distance[cluster_core, k] + arc_list.distance[k, cluster_core]
+                            vertex_to_be_added = k
+
+                        if vertex_to_be_added != -1:
+                            #AddVertex(incumbent, vertex_to_be_added, i, j, incumbent.route_vertex_cnt[i, j] + 1) anterior
+                            AddVertex(incumbent, vertex_to_be_added, i, j, (incumbent.route_vertex_cnt[i, j], instance.penalty))
+                            capacity_used = capacity_used + vertex_list.vertices[vertex_to_be_added].PickupAmount
+
+                    #Do while
+                    if vertex_to_be_added == -1:
+                        break
+                
+                ImproveSolution(incumbent, instance.penalty)
+
+
+
+    while True:
+
+        vertex_to_be_added = -1 # número de vertice -> adicionado
+        #DeterminePenalty(instance)
+        
+        if instance.penalty == 0:
+            DeterminePenalty(instance)
+        
+        max_net_profit = incumbent.net_profit - instance.penalty #max de lucro - visitas
+        min_total_distance = incumbent.total_distance # total min de distância
+        max_mandatory = 0 # número maximo de vistas obrigatorias
+        #print(incumbent.net_profit)
+        #segundo loop número de depositos +1 até o número de locais
+        #vertex -> é uma posição
+
+
+        for vertex2 in range(vertex_list.num_depots, vertex_list.num_locations):
+            #vertex_list.vertices-> dados obtidos dos métodos GetVexdata, GetArcData, GetVeicle, GetSolver
+            
+ 
+            if(vertex_list.vertices[vertex2].mandatory >= 0) and (incumbent.vertices_visited[vertex2] == 0): #incumbent.vertices_visited[vertex] não tem nada
+
+                #For i = 1 To vehicle_type_list.num_vehicle_types
+                for si in range(0, vehicle_type_list.num_vehicle_types):
+                    #For j = 1 To vehicle_type_list.vehicle_types(i).number_available
+                    for sj in range(0, vehicle_type_list.vehicle_types[si].NumberAvailable):
+                        if sj == 0:
+
+                            #vetor de nos com oirigem e destino
+                            #For k = 1 To incumbent.route_vertex_cnt(i, j) + 1
+                            for sk in range(0, incumbent.route_vertex_cnt[si, sj] +1):
+                                #adiciona o vetor e chama a função
+                                AddVertex(incumbent, vertex, si, sj, sk, instance.penalty)
+
+                                if(vertex_list.vertices[vertex2].mandatory > max_mandatory) or (
+                                    (vertex_list.vertices[vertex2].mandatory >= max_mandatory) and (incumbent.net_profit > max_net_profit + epsilon)) or (
+                                    (vertex_list.vertices[vertex2].mandatory >= max_mandatory) and (incumbent.net_profit > max_net_profit - epsilon) and (incumbent.total_distance < min_total_distance - epsilon)):
+
+                                    max_net_profit = incumbent.net_profit
+                                    min_total_distance = incumbent.total_distance
+                                    max_mandatory = vertex_list.vertices[vertex2].mandatory
+                                    vertex_to_be_added = vertex2
+                                    vehicle_type_to_add_to = si
+                                    vehicle_id_to_add_to = sj
+                                    position_to_add_to = sk
+
+                                RemoveVertex(incumbent, si, sj, sk, instance.penalty)
+                        elif incumbent.route_vertex_cnt[si, sj -1] > 0:
+
+                            #For k = 1 To incumbent.route_vertex_cnt(i, j) + 1
+                            for k in range(0, incumbent.route_vertex_cnt[si, sj] + 1):
+                                
+                                AddVertex(incumbent, vertex, si, sj, sk, instance.penalty)
+
+                                if(vertex_list.vertices[vertex2].mandatory > max_mandatory) or (
+                                    (vertex_list.vertices[vertex2].mandatory >= max_mandatory) and (incumbent.net_profit > max_net_profit + epsilon)) or (
+                                    (vertex_list.vertices[vertex2].mandatory >= max_mandatory) and (incumbent.net_profit > max_net_profit - epsilon) and (incumbent.total_distance < min_total_distance - epsilon)):
+
+                                    max_net_profit = incumbent.net_profit
+                                    min_total_distance = incumbent.total_distance
+                                    max_mandatory = vertex_list.vertices[vertex2].mandatory
+                                    vertex_to_be_added = vertex2
+                                    vehicle_type_to_add_to = si
+                                    vehicle_id_to_add_to = sj
+                                    position_to_add_to = sk
+
+                                RemoveVertex(incumbent, si, sj, sk, instance.penalty)
+
+        
+        if vertex_to_be_added != -1:
+            #AddVertex(incumbent, vertex_to_be_added, vehicle_type_to_add_to, vehicle_id_to_add_to, position_to_add_to)
+            AddVertex(incumbent, vertex_to_be_added, vehicle_type_to_add_to, vehicle_id_to_add_to, position_to_add_to, instance.penalty)
+
+            #end_time = Now
+            #print "Added vertex: " & vertex_to_be_added & " obj: " & incumbent.net_profit
+            
+            #hora final = agora
+            #print "vértice adicionado:" & vértice a ser adicionado & "obj:" & lucro líquido incumbente
+        EvaluateSolution(incumbent)
+
+        #if ((incumbent.feasible == True) and (best_known.feasible == False)) or (
+            #(incumbent.covers_mandatory_vertices == True) and (best_known.covers_mandatory_vertices == False)) or (
+            #(incumbent.feasible == best_known.feasible) and (incumbent.net_profit > best_known.net_profit + epsilon)):
+        
+            #((titular viável = Verdadeiro) E (mais conhecido. viável = Falso)) Ou
+            #((titular cobre vértices obrigatórios = Verdadeiro) E (mais conhecido cobre vértices obrigatórios = Falso)) Ou
+            #((histórico viável = mais conhecido viável) E (lucro líquido histórico> lucro líquido mais conhecido + epsilon
+
+            #best_known = incumbent
+
+                        
+        if vertex_to_be_added == -1:
+            break
+
+    #for i in range(0, vehicle_type_list.num_vehicle_types):
+        #For j = 1 To vehicle_type_list.vehicle_types(i).number_available
+        #for j in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable):
+            #for k in range(0, incumbent.route_vertex_cnt[i,j]):
+                #print(best_known.route_vertices[k, i, j])
+
+    print(best_known.route_vertices)
+
+    '''
+    for i in range(0, vehicle_type_list.num_vehicle_types):
+        #For j = 1 To vehicle_type_list.vehicle_types(i).number_available
+        for j in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable):
+            print("route_vertex_cnt", incumbent.route_vertex_cnt[i,j])
+    '''
+    '''
+    for vet in range(vertex_list.num_depots, vertex_list.num_customers):
+        #For i = 1 To vehicle_type_list.num_vehicle_types
+        for i in range(0, vehicle_type_list.num_vehicle_types):
+            #For j = 1 To vehicle_type_list.vehicle_types(i).number_available
+            for j in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable):
+                print("vertex", incumbent.route_vertices[vet, i, j])
+    
+    #print(incumbent.net_profit)
+    '''
+VRP_Solver()

@@ -48,7 +48,7 @@ def GetVertexData():
         time_window_start = Time_Converter(tempo_inicio)
         time_window_end = Time_Converter(tempo_final)
         
-        if dados2.iloc[i,7] == "Pode ser visitado":
+        if dados2.iloc[i,7] == "Deve ser visitado":
             obrigado = 1
         elif dados2.iloc[i,7] == "Não visite":
             obrigado = -1
@@ -78,8 +78,8 @@ def GetArcData():
     arc_list = Arc_Data()
     #vertex_list = GetVertexData()
     
-    arc_list.distance = np.zeros((vertex_list.num_locations, vertex_list.num_locations), dtype ='int16')
-    arc_list.duration = np.zeros((vertex_list.num_locations, vertex_list.num_locations), dtype ='int16')
+    arc_list.distance = np.zeros((vertex_list.num_locations, vertex_list.num_locations), dtype ='float16')
+    arc_list.duration = np.zeros((vertex_list.num_locations, vertex_list.num_locations), dtype ='float16')
     i = 0
     j = 0
     k = 0
@@ -154,6 +154,8 @@ def GetInstanceData():
 
     return instance
 
+instance = GetInstanceData()
+
 
 
 def GetVehicleTypeData():
@@ -201,9 +203,9 @@ def GetVehicleTypeData():
             origin_base_id = i
             return_base_id = dados2.iloc[k, 11] #-> se salva da forma extendida
             #return_base_id = i
-            type_id = j            
+            type_id = j   
 
-            #print(return_base_id)
+            #print(work_start_time)
 
             #capacity, fixed_cost_per_trip, cost_per_unit_distance, duration_multiplier, number_available, work_start_time, distance_limit, driving_time_limit, working_time_limit, origin_base_id, return_base_id, type_id
             vehicle_type_list.create_Vehicle_Type_List_Data(capacity, fixed_cost_per_trip, cost_per_unit_distance, 
@@ -214,7 +216,7 @@ def GetVehicleTypeData():
     #print(vehicle_type_list.vehicle_types)
 
     #para saber de onde vem os dados
-    instance =  GetInstanceData()
+    #instance =  GetInstanceData()
     
     if instance.vehicle_location_incompatibility == True:
         dados3 = pd.read_excel('Dados/VRP_Spreadsheet_Solver_6Ps.xlsm',sheet_name="3.1. Compatibilidade do veículo")
@@ -241,15 +243,16 @@ def GetVehicleTypeData():
 vehicle_type_list = GetVehicleTypeData()
 
 
-def DeterminePenalty():
+def DeterminePenalty(instance):
     
-    instance =  GetInstanceData()
-    
+    #instance =  GetInstanceData()
     distance_total = 0 #0.0 tipo doube
     cost_total = 0  #0.0 tipo doube
     
     i = 0
     j = 0
+    dif = 0 #diferença
+
 
     #aqui é DeterminePenalty##################################################################:
     
@@ -257,9 +260,15 @@ def DeterminePenalty():
     for i in range(0, vertex_list.num_locations):
         for j in range(0, vertex_list.num_locations):
 
-            distance_total = distance_total + int(arc_list.distance[i,j])
+            #distance_total = distance_total + int(arc_list.distance[i,j])
+            distance_total = distance_total + arc_list.distance[i,j]
 
+    distance_total= (round(distance_total,3))
+
+    #dif = (vertex_list.num_locations)/ 1000
+    #distance_total = (distance_total - dif)
     
+
     cost_total = 0
     for i in range(0, vehicle_type_list.num_vehicle_types):
         for j in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable):
@@ -268,6 +277,8 @@ def DeterminePenalty():
     if cost_total < 1:
         cost_total = 1
 
+    instance.penalty = distance_total * cost_total
+
     for i in range(0, vehicle_type_list.num_vehicle_types):
         for j in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable):
             instance.penalty = instance.penalty + vehicle_type_list.vehicle_types[i].FixedCostPerTrip
@@ -275,19 +286,19 @@ def DeterminePenalty():
     
     #https://www.automateexcel.com/functions/ceiling-formula-excel/
     #Application.WorksheetFunction.Ceiling(instance.penalty, 1) -> transformando para inteiro
-    instance.penalty = int(instance.penalty)
 
+    instance.penalty = int(instance.penalty)
 
     if instance.penalty < 1000:
         instance.penalty = 1000
-
     ########DeterminePenalty#################################################################################:
 
-    return instance
+    return instance.penalty
 
 
-instance = DeterminePenalty()
+#instance = DeterminePenalty()
 
+#print(type(instance.penalty))
 
 def GetSolverOptions():
     dados = pd.read_excel('Dados/VRP_Spreadsheet_Solver_6Ps.xlsm',sheet_name="VRP Solver Console")
@@ -300,6 +311,7 @@ def GetSolverOptions():
     else:
         solver_options.warm_start = False
 
+    #Colocar depois dados.iloc[21, 2]
     if dados.iloc[20, 2] == "sim":
         solver_options.status_updates = True
     else:
@@ -341,3 +353,5 @@ solver_options = GetSolverOptions()
 #print(arc_list.distance)
 #print(vertex_list.vertices[0].TimeWindowsEnd)
 #print(vehicle_type_list.num_vehicle_types)
+#print(vehicle_type_list.vehicle_types[0].CostPerUnitDistance)
+#GetArcData()

@@ -1,0 +1,321 @@
+Sub VRP_Solver()
+    
+    If dict Is Nothing Then
+        Call SetupDictionary
+    End If
+    
+    Application.ScreenUpdating = False
+    Application.Calculation = xlCalculationManual
+    Application.StatusBar = False
+    
+    Dim WorksheetExists As Boolean
+    Dim reply As Integer
+    
+    WorksheetExists = CheckWorksheetExistence(dict("1.Locations")) And CheckWorksheetExistence(dict("2.Distances")) And CheckWorksheetExistence(dict("3.Vehicles")) And CheckWorksheetExistence(dict("4.Solution"))
+    If WorksheetExists = False Then
+        reply = MsgBox(dict("Worksheets 1.Locations, 2.Distances, 3.Vehicles, and 4.Solution must exist for VRP Spreadsheet Solver to function."), vbOKOnly, dict("VRP Spreadsheet Solver"))
+        Application.ScreenUpdating = True
+        Application.Calculation = xlCalculationAutomatic
+        Exit Sub
+    Else
+        reply = MsgBox(dict("This will take ") & ThisWorkbook.Worksheets("VRP Solver Console").Cells(24, 3).value & dict(" seconds. Do you want to continue?"), vbYesNo, dict("VRP Spreadsheet Solver"))
+        If reply = vbNo Then
+            Application.ScreenUpdating = True
+            Application.Calculation = xlCalculationAutomatic
+            Exit Sub
+        End If
+    End If
+    
+    Application.EnableCancelKey = xlErrorHandler
+    On Error GoTo VRP_Solver_Finish
+    
+    'Allocate memory and get the data
+    
+    Call GetInstanceData
+    Call GetVertexData
+    Call GetArcData
+    Call GetVehicleTypeData
+    Call GetSolverOptions
+    
+    Call DeterminePenalty
+    
+    Dim candidate_list() As candidate_data
+    ReDim candidate_list(1 To vertex_list.num_customers)
+    Dim swap_candidate As candidate_data
+    Dim candidate_count As Long
+    Dim final_candidate_count As Long
+    
+    Dim incumbent As solution_data
+    Call InitializeSolution(incumbent)
+    Call EvaluateSolution(incumbent)
+        
+    Dim best_known As solution_data
+    Call InitializeSolution(best_known)
+    best_known = incumbent
+    
+    Dim iteration As Long
+    
+    Dim i As Long
+    Dim j As Long
+    Dim k As Long
+    Dim l As Long
+    
+    Dim vertex As Long
+    Dim vertex_to_swap As Long
+    
+    Dim vertex_to_be_added As Long
+    Dim vehicle_type_to_add_to As Long
+    Dim vehicle_id_to_add_to As Long
+    Dim position_to_add_to As Long
+                    
+    Dim max_net_profit As Double
+    Dim min_total_distance As Double
+    Dim max_mandatory As Long
+    Dim max_secondary_profit As Double
+    
+    Dim cluster_core As Long
+    Dim distance_to_farthest_customer As Double
+    Dim cluster_diameter As Double
+    Dim capacity_used As Double
+    
+    Dim removal_rate As Double
+    Dim insertion_heuristic As Long
+    
+    Dim start_time As Date
+    Dim end_time As Date
+    Dim time_elapsed As Double
+    
+    'infeasibility check
+    
+    Dim infeasibility_count As Long
+    Dim infeasibility_string As String
+    
+    Call FeasibilityCheckData(infeasibility_count, infeasibility_string)
+
+    If infeasibility_count > 0 Then
+        reply = MsgBox(dict("Reasons for infeasibility detected.") & Chr(13) & infeasibility_string & dict("Do you want to continue?"), vbYesNo, dict("VRP Spreadsheet Solver"))
+        If reply = vbNo Then
+            Application.ScreenUpdating = True
+            Application.Calculation = xlCalculationAutomatic
+            Exit Sub
+        End If
+    End If
+    
+    'read best known solution
+    
+    If solver_options.warm_start = True Then
+        Call ReadSolution(incumbent)
+        Call EvaluateSolution(incumbent)
+        
+        If incumbent.feasible = True Then
+            best_known = incumbent
+        End If
+    End If
+    
+    start_time = Now
+    end_time = Now
+        
+    'constructive phase
+    
+    If solver_options.status_updates = True Then
+        Application.DisplayStatusBar = True
+        Application.ScreenUpdating = True
+        Application.StatusBar = dict("Constructive phase...")
+        Application.ScreenUpdating = False
+    End If
+                
+    Do
+        DoEvents
+
+        vertex_to_be_added = -1
+        max_net_profit = incumbent.net_profit - instance.penalty
+        min_total_distance = incumbent.total_distance
+        max_mandatory = 0
+
+        For vertex = vertex_list.num_depots + 1 To vertex_list.num_locations
+
+            If (vertex_list.vertices(vertex).mandatory >= 0) And (incumbent.vertices_visited(vertex) = 0) Then
+
+                For i = 1 To vehicle_type_list.num_vehicle_types
+                    For j = 1 To vehicle_type_list.vehicle_types(i).number_available
+                        If j = 1 Then
+
+                            For k = 1 To incumbent.route_vertex_cnt(i, j) + 1
+
+                                Call AddVertex(incumbent, vertex, i, j, k)
+
+                                If (vertex_list.vertices(vertex).mandatory > max_mandatory) Or _
+                                   ((vertex_list.vertices(vertex).mandatory >= max_mandatory) And (incumbent.net_profit > max_net_profit + epsilon)) Or _
+                                   ((vertex_list.vertices(vertex).mandatory >= max_mandatory) And (incumbent.net_profit > max_net_profit - epsilon) And (incumbent.total_distance < min_total_distance - epsilon)) Then
+                                    max_net_profit = incumbent.net_profit
+                                    min_total_distance = incumbent.total_distance
+                                    max_mandatory = vertex_list.vertices(vertex).mandatory
+                                    vertex_to_be_added = vertex
+                                    vehicle_type_to_add_to = i
+                                    vehicle_id_to_add_to = j
+                                    position_to_add_to = k
+                                End If
+
+                                Call RemoveVertex(incumbent, i, j, k)
+
+                            Next k
+
+                        ElseIf incumbent.route_vertex_cnt(i, j - 1) > 0 Then
+
+                            For k = 1 To incumbent.route_vertex_cnt(i, j) + 1
+
+                                Call AddVertex(incumbent, vertex, i, j, k)
+
+                                If (vertex_list.vertices(vertex).mandatory > max_mandatory) Or _
+                                   ((vertex_list.vertices(vertex).mandatory >= max_mandatory) And (incumbent.net_profit > max_net_profit + epsilon)) Or _
+                                   ((vertex_list.vertices(vertex).mandatory >= max_mandatory) And (incumbent.net_profit > max_net_profit - epsilon) And (incumbent.total_distance < min_total_distance - epsilon)) Then
+
+                                    max_net_profit = incumbent.net_profit
+                                    min_total_distance = incumbent.total_distance
+                                    max_mandatory = vertex_list.vertices(vertex).mandatory
+                                    vertex_to_be_added = vertex
+                                    vehicle_type_to_add_to = i
+                                    vehicle_id_to_add_to = j
+                                    position_to_add_to = k
+
+                                End If
+
+                                Call RemoveVertex(incumbent, i, j, k)
+
+                            Next k
+
+                        End If
+                    Next j
+                Next i
+
+            End If
+
+        Next vertex
+
+        If vertex_to_be_added <> -1 Then
+            Call AddVertex(incumbent, vertex_to_be_added, vehicle_type_to_add_to, vehicle_id_to_add_to, position_to_add_to)
+            'end_time = Now
+            'MsgBox "Added vertex: " & vertex_to_be_added & " obj: " & incumbent.net_profit
+        End If
+
+        Call EvaluateSolution(incumbent)
+
+        If ((incumbent.feasible = True) And (best_known.feasible = False)) Or _
+           ((incumbent.covers_mandatory_vertices = True) And (best_known.covers_mandatory_vertices = False)) Or _
+           ((incumbent.feasible = best_known.feasible) And (incumbent.net_profit > best_known.net_profit + epsilon)) Then
+
+            best_known = incumbent
+        End If
+
+    Loop While vertex_to_be_added <> -1
+
+    'If Abs(best_known.net_profit - incumbent.net_profit) > epsilon Then
+        'Call ImproveSolution(best_known)
+        'Call ImproveSolution(incumbent)
+    'Else
+        'Call ImproveSolution(best_known)
+    'End If
+
+'    Call EvaluateSolution(incumbent)
+'    Call EvaluateSolution(best_known)
+    
+    If ((incumbent.feasible = True) And (best_known.feasible = False)) Or _
+       ((incumbent.covers_mandatory_vertices = True) And (best_known.covers_mandatory_vertices = False)) Or _
+       ((incumbent.feasible = best_known.feasible) And (incumbent.net_profit > best_known.net_profit + epsilon)) Then
+
+        best_known = incumbent
+    End If
+
+    '2nd constructive heuristic
+    
+    Call InitializeSolution(incumbent)
+    
+    For i = 1 To vehicle_type_list.num_vehicle_types
+        For j = 1 To vehicle_type_list.vehicle_types(i).number_available
+            
+            cluster_core = -1
+            capacity_used = 0
+                
+            distance_to_farthest_customer = 0
+            For k = vertex_list.num_depots + 1 To vertex_list.num_locations
+                If (arc_list.distance(vehicle_type_list.vehicle_types(i).origin_base_id, k) + arc_list.distance(k, vehicle_type_list.vehicle_types(i).return_base_id) > cluster_diameter) And (vertex_list.vertices(k).mandatory >= 0) And (incumbent.vertices_visited(k) = 0) Then
+                    distance_to_farthest_customer = arc_list.distance(vehicle_type_list.vehicle_types(i).origin_base_id, k) + arc_list.distance(k, vehicle_type_list.vehicle_types(i).return_base_id)
+                    cluster_core = k
+                End If
+            Next k
+            
+            If cluster_core <> -1 Then
+                Call AddVertex(incumbent, cluster_core, i, j, 1)
+                capacity_used = Abs(vertex_list.vertices(cluster_core).pickup_amount + vertex_list.vertices(cluster_core).delivery_amount)
+                
+                Do
+                
+                    vertex_to_be_added = -1
+                    cluster_diameter = (arc_list.distance(vehicle_type_list.vehicle_types(i).origin_base_id, cluster_core) + arc_list.distance(cluster_core, vehicle_type_list.vehicle_types(i).return_base_id)) / 2
+                    For k = vertex_list.num_depots + 1 To vertex_list.num_locations
+                        If (arc_list.distance(cluster_core, k) + arc_list.distance(k, cluster_core) < cluster_diameter) And (capacity_used + vertex_list.vertices(k).pickup_amount <= vehicle_type_list.vehicle_types(i).capacity) And (vertex_list.vertices(k).mandatory >= 0) And (incumbent.vertices_visited(k) = 0) Then
+                            cluster_diameter = arc_list.distance(cluster_core, k) + arc_list.distance(k, cluster_core)
+                            vertex_to_be_added = k
+                        End If
+                    Next k
+                    
+                    If vertex_to_be_added <> -1 Then
+                        Call AddVertex(incumbent, vertex_to_be_added, i, j, incumbent.route_vertex_cnt(i, j) + 1)
+                        capacity_used = capacity_used + vertex_list.vertices(vertex_to_be_added).pickup_amount
+                    End If
+                
+                Loop While vertex_to_be_added <> -1
+
+                Call ImproveSolution(incumbent)
+            End If
+            
+        Next j
+    Next i
+    
+    'MsgBox "Iterations performed: " & iteration
+    
+VRP_Solver_Finish:
+    
+    'squeeze the solution
+    
+    'write the solution
+    
+    'MsgBox best_known.net_profit
+    
+    'If best_known.feasible = True Then
+        'reply = MsgBox(dict("VRP Spreadsheet Solver performed ") & iteration & dict(" LNS iterations and found a solution with a net profit of ") & CStr(best_known.net_profit) & dict(". Do you want to overwrite the current solution with the best found solution?"), vbYesNo, dict("VRP Spreadsheet Solver"))
+        'If reply = vbYes Then
+        'Call WriteSolution(best_known)
+        'End If
+    'Else
+        'reply = MsgBox(dict("The best found solution after ") & iteration & dict(" LNS iterations does not satisfy all constraints. Do you want to overwrite the current solution with the best found solution?"), vbYesNo, dict("VRP Spreadsheet Solver"))
+        'If reply = vbYes Then
+            'Call WriteSolution(best_known)
+        'End If
+    'End If
+    
+    'Erase the data
+    
+    Erase vertex_list.vertices
+    Erase arc_list.distance
+    Erase arc_list.duration
+    Erase vehicle_type_list.vehicle_types
+    
+    Erase incumbent.net_profit_per_route
+    Erase incumbent.route_vertex_cnt
+    Erase incumbent.route_vertices
+    Erase incumbent.vertices_visited
+    
+    Erase best_known.net_profit_per_route
+    Erase best_known.route_vertex_cnt
+    Erase best_known.route_vertices
+    Erase best_known.vertices_visited
+    
+    Application.StatusBar = False
+    Application.ScreenUpdating = True
+    Application.Calculation = xlCalculationAutomatic
+    
+    ThisWorkbook.Worksheets(dict("4.Solution")).Activate
+    Cells(1, 1).Select
+    
+End Sub

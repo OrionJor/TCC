@@ -106,12 +106,12 @@ class Arc_Data:
 class Instance_Data:
 
     def __init__(self):
-        self.open_vrp = None
-        self.multi_trip = None
+        self.open_vrp = 0
+        self.multi_trip = 0
         self.penalty = 0
-        self.soft_time_windows = None
-        self.backhauls = None
-        self.vehicle_location_incompatibility = None
+        self.soft_time_windows = 0
+        self.backhauls = 0
+        self.vehicle_location_incompatibility = 0
         self.num_depots = 0
         self.num_customers = 0
         self.num_locations = 0 
@@ -137,8 +137,8 @@ class Instance_Data:
 
 class Solution_Data:
     def __init__(self):
-        self.feasible = None
-        self.covers_mandatory_vertices = None
+        self.feasible = 0
+        self.covers_mandatory_vertices = 0
         self.net_profit = 0
         self.total_distance = 0
         self.net_profit_per_route = []

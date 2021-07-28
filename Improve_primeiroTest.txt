@@ -1,0 +1,155 @@
+Private Sub ImproveSolution(solution As solution_data)
+    
+    Dim i As Long
+    Dim j As Long
+    Dim k As Long
+    
+    Dim a As Long
+    Dim b As Long
+    Dim c As Long
+    
+    Dim vertex As Long
+    Dim vertex_buffer() As Long
+    ReDim vertex_buffer(1 To vertex_list.num_customers)
+    
+    Dim vehicle_type_to_swap1 As Long
+    Dim vehicle_type_to_swap2 As Long
+    Dim vehicle_id_to_swap1 As Long
+    Dim vehicle_id_to_swap2 As Long
+    Dim position_to_swap1 As Long
+    Dim position_to_swap2 As Long
+    Dim vertex_to_swap As Long
+    Dim vehicle_id_start_index As Long
+    
+    Dim vehicle_type_to_relocate1 As Long
+    Dim vehicle_type_to_relocate2 As Long
+    Dim vehicle_id_to_relocate1 As Long
+    Dim vehicle_id_to_relocate2 As Long
+    Dim position_to_relocate1 As Long
+    Dim position_to_relocate2 As Long
+    
+    Dim vehicle_type_for_2opt1 As Long
+    Dim vehicle_type_for_2opt2 As Long
+    Dim vehicle_id_for_2opt1 As Long
+    Dim vehicle_id_for_2opt2 As Long
+    Dim position_for_2opt1 As Long
+    Dim position_for_2opt2 As Long
+    Dim vertex_cnt_for_2opt1 As Long
+    Dim vertex_cnt_for_2opt2 As Long
+    
+    Dim reversal_for_2opt1 As Long
+    Dim reversal_for_2opt2 As Long
+    
+    Dim vehicle_type_for_chain_reversal As Long
+    Dim vehicle_id_for_chain_reversal As Long
+    Dim position_for_chain_reversal1 As Long
+    Dim position_for_chain_reversal2 As Long
+    Dim midpoint_for_chain_reversal As Long
+    
+    Dim vehicle_type_for_full_swap1 As Long
+    Dim vehicle_type_for_full_swap2 As Long
+    Dim vehicle_id_for_full_swap1 As Long
+    Dim vehicle_id_for_full_swap2 As Long
+    Dim max_vertex_cnt As Long
+    Dim vertex_cnt_to_swap As Long
+    
+    Dim max_net_profit As Double
+    Dim min_total_distance As Double
+    
+    Dim improvement_iterations As Integer
+    
+    improvement_iterations = 0
+    
+    'polishing
+    
+    'MsgBox "Before improvement: " & solution.net_profit '& " " & solution.feasible
+    
+    Do
+        DoEvents
+
+        With solution
+        
+             max_net_profit = .net_profit
+             min_total_distance = .total_distance
+             
+             'swap
+             
+             vehicle_type_to_swap1 = -1
+             For i = 1 To vehicle_type_list.num_vehicle_types
+                 For j = 1 To vehicle_type_list.vehicle_types(i).number_available
+                     For k = 1 To .route_vertex_cnt(i, j)
+                         
+                         For a = i To vehicle_type_list.num_vehicle_types
+                             
+                             If a = i Then
+                                vehicle_id_start_index = j
+                             Else
+                                vehicle_id_start_index = 1
+                             End If
+                                
+                             For b = vehicle_id_start_index To vehicle_type_list.vehicle_types(a).number_available
+                                 For c = 1 To .route_vertex_cnt(a, b)
+    
+                                    vertex_to_swap = .route_vertices(i, j, k)
+                                    .route_vertices(i, j, k) = .route_vertices(a, b, c)
+                                    .route_vertices(a, b, c) = vertex_to_swap
+                                    
+                                    If instance.multi_trip = True Then
+                                    
+                                        Call EvaluateRouteMultiTrip(solution, i, j)
+                                        Call EvaluateRouteMultiTrip(solution, a, b)
+                                    Else
+    
+                                        Call EvaluateRouteSingleTrip(solution, i, j)
+                                        Call EvaluateRouteSingleTrip(solution, a, b)
+                                    
+                                    End If
+    
+                                    If (.net_profit > max_net_profit + epsilon) Or ((.net_profit > max_net_profit - epsilon) And (.total_distance < min_total_distance - epsilon)) Then
+                                        
+                                        max_net_profit = .net_profit
+                                        min_total_distance = .total_distance
+    
+                                        vehicle_type_to_swap1 = i
+                                        vehicle_id_to_swap1 = j
+                                        position_to_swap1 = k
+    
+                                        vehicle_type_to_swap2 = a
+                                        vehicle_id_to_swap2 = b
+                                        position_to_swap2 = c
+                                    End If
+    
+                                    vertex_to_swap = .route_vertices(i, j, k)
+                                    .route_vertices(i, j, k) = .route_vertices(a, b, c)
+                                    .route_vertices(a, b, c) = vertex_to_swap
+                                    
+                                    If instance.multi_trip = True Then
+                                    
+                                        Call EvaluateRouteMultiTrip(solution, i, j)
+                                        Call EvaluateRouteMultiTrip(solution, a, b)
+                                    Else
+    
+                                        Call EvaluateRouteSingleTrip(solution, i, j)
+                                        Call EvaluateRouteSingleTrip(solution, a, b)
+                                    
+                                    End If
+    
+                                 Next c
+                             Next b
+                         Next a
+    
+                     Next k
+                 Next j
+             Next i
+    
+            'relocate
+    
+        End With
+        
+        improvement_iterations = improvement_iterations + 1
+
+    Loop While ((vehicle_type_to_swap1 <> -1) Or (vehicle_type_to_relocate1 <> -1) Or (vehicle_type_for_2opt1 <> -1) Or (vehicle_type_for_chain_reversal <> -1) Or (vehicle_type_for_full_swap1 <> -1)) And (improvement_iterations <= max_improvement_iterations)
+
+    Call EvaluateSolution(solution)
+
+End Sub
