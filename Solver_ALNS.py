@@ -45,7 +45,7 @@ def VRP_Solver():
         #Atributos: mandatory, net_profit, total_distance, vertex_to_be_added, vehicle_type_index, vehicle_id, position
         candidate_list.create_candidate(0, 0, 0, 0, -1, -1, -1)
 
-    swap_candidate = None # Do tipo Candidate()
+    swap_candidate = 0 # Do tipo Candidate()
     #cria váriaveis tipo Inteiro long
     candidate_count = 0
     final_candidate_count = 0
@@ -67,7 +67,7 @@ def VRP_Solver():
     best_known = incumbent
     
     #cria as variáveis
-    iteration = None #->valor de interações
+    iteration = 0 #->valor de interações
 
     #cria a variáveis da matriz
     #observação i->origem, j -> destino, k-> veículo ou seja i-> arco atual, j -> arco posterior
@@ -117,6 +117,8 @@ def VRP_Solver():
     #infeasibility check -> verificar de inviabilidade com o contador e com string 
     infeasibility_count = 0 #tipo inteiro
     infeasibility_string =""
+
+    ts = [3, 6, 2, 5, 1, 4, 7, 8]
 
     FeasibilityCheckData(infeasibility_count, infeasibility_string)
 
@@ -318,11 +320,28 @@ def VRP_Solver():
         if vertex_to_be_added == -1:
             break
 
-    iteration =0 
-    while True:
 
-        if solver_options.status_updates == True:
-            print("Iniciando a iteração LNS ",  iteration, ". Melhor lucro líquido total até agora:", best_known.net_profit)
+
+    incumbent.feasible = True
+    incumbent.covers_mandatory_vertices = True
+    incumbent.total_distance = 7.435
+    incumbent.net_profit = -83.4207
+    incumbent.net_profit_per_route[0] = -83.4207
+    incumbent.total_distance_per_route[0] = 7.435
+    #incumbent.route_vertex_cnt[0,0] = 8
+    
+    for con in  range (0, vertex_list.num_customers):
+        incumbent.route_vertices[con, 0, 0] = ts[con]
+
+    #print(incumbent.route_vertices)
+    
+    iteration =0 
+    solver_options.CPU_time_limit = 2
+    
+    while True:
+        
+        #if solver_options.status_updates == True:
+            #print("Iniciando a iteração LNS ",  iteration, ". Melhor lucro líquido total até agora:", best_known.net_profit)
 
         #https://docs.python.org/pt-br/3.7/library/random.html ->Funções para inteiros random.randrange
         #https://pynative.com/python-random-randrange/
@@ -353,7 +372,8 @@ def VRP_Solver():
         #print "Objetivo inicial:" e lucro líquido incumbente e "" e iteração
 
         insertion_heuristic = randint(1,2)
-        #Retorna um número inteiro aleatório entre os números que você especificar. Um novo número inteiro aleatório é retornado sempre que a planilha é calculada
+            #Retorna um número inteiro aleatório entre os números que você especificar. Um novo número inteiro aleatório é retornado sempre que a planilha é calculada
+
 
         while True:
 
@@ -366,7 +386,7 @@ def VRP_Solver():
 
                     max_mandatory = 0
                     max_net_profit = incumbent.net_profit - instance.penalty
-                    vehicle_id_to_add = -1
+                    vehicle_type_to_add_to = -1
 
                     #vetor de nos com oirigem e destino
                     #For i = 1 To vehicle_type_list.num_vehicle_types
@@ -374,7 +394,7 @@ def VRP_Solver():
                         #For j = 1 To vehicle_type_list.vehicle_types(i).number_available
                         for j in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable):
                             #For k = 1 To incumbent.route_vertex_cnt(i, j) + 1
-                            for k in range(0, incumbent.route_vertex_cnt[i, j] + 1):
+                            for k in range(0, incumbent.route_vertex_cnt[i, j] +1):
                                 
                                 #adiciona o vetor e chama a função
                                 AddVertex(incumbent, vertex, i, j, k, instance.penalty)
@@ -397,9 +417,8 @@ def VRP_Solver():
                                     max_secondary_profit = incumbent.net_profit
                                 
                                 RemoveVertex(incumbent, i, j, k, instance.penalty)
-                            
-                    
-                    if vehicle_id_to_add != -1:
+
+                    if vehicle_type_to_add_to != -1:
                         candidate_count = candidate_count + 1
 
                         if insertion_heuristic == 2 or max_mandatory == 0:
@@ -408,13 +427,12 @@ def VRP_Solver():
                         else:
                             candidate_list[(candidate_count -1)].NetProfit = max_net_profit
 
-                        candidate_list[(candidate_count -1)].TotalDistance = min_total_distance
-                        candidate_list[(candidate_count -1)].mandatory = max_mandatory
-                        candidate_list[(candidate_count -1)].VertexToBeAdded = vertex
-                        candidate_list[(candidate_count -1)].VehicleTypeIndex = vehicle_type_to_add_to
-                        candidate_list[(candidate_count -1)].VehicleId = vehicle_id_to_add_to
-                        candidate_list[(candidate_count -1)].position = position_to_add_to
-
+                            candidate_list[(candidate_count -1)].TotalDistance = min_total_distance
+                            candidate_list[(candidate_count -1)].mandatory = max_mandatory
+                            candidate_list[(candidate_count -1)].VertexToBeAdded = vertex
+                            candidate_list[(candidate_count -1)].VehicleTypeIndex = vehicle_type_to_add_to
+                            candidate_list[(candidate_count -1)].VehicleId = vehicle_id_to_add_to
+                            candidate_list[(candidate_count -1)].position = position_to_add_to
 
             if candidate_count > 0:
 
@@ -425,10 +443,12 @@ def VRP_Solver():
 
                 #For i = 1 To final_candidate_count
                 for i in range(0, final_candidate_count):
+
                     k = -1
-                    max_mandatory = candidate_count[i].mandatory
+                    max_mandatory = candidate_list[i].mandatory
                     max_net_profit = candidate_list[i].NetProfit
                     min_total_distance = candidate_list[i].TotalDistance
+                
                     #For j = i + 1 To candidate_count
                     for j in range(i+1, candidate_count):
                         if(candidate_list[j].mandatory > max_mandatory) or (
@@ -449,14 +469,16 @@ def VRP_Solver():
 
                 
                 #k = Application.WorksheetFunction.RandBetween(1, final_candidate_count)
-                k = randint(0, (final_candidate_count -1 ))
+                k = randint(1, final_candidate_count)
                 
-                vertex_to_be_added = candidate_list[k].VertexToBeAdded
-                vehicle_type_to_add_to = candidate_list[k].VehicleTypeIndex
-                vehicle_id_to_add = candidate_list[k].VehicleId
-                position_to_add_to = candidate_list[k].position
+                vertex_to_be_added = candidate_list[k-1].VertexToBeAdded
+                vehicle_type_to_add_to = candidate_list[k-1].VehicleTypeIndex
+                vehicle_id_to_add_to = candidate_list[k-1].VehicleId
+                positon_to_add_to = candidate_list[k-1].position
 
-                AddVertex(incumbent, vertex_to_be_added, vehicle_type_to_add_to, vehicle_id_to_add_to, position_to_add_to, instance.penalty)
+
+                #Call AddVertex(incumbent, vertex_to_be_added, vehicle_type_to_add_to, vehicle_id_to_add_to, position_to_add_to)
+                AddVertex(incumbent, vertex_to_be_added, vehicle_type_to_add_to, vehicle_id_to_add_to, positon_to_add_to, instance.penalty)
 
             
             EvaluateSolution(incumbent)
@@ -473,9 +495,13 @@ def VRP_Solver():
             if candidate_count == 0:
                 break
 
+        ImproveSolution(incumbent, instance.penalty)
+
+
+        
         #print "Before polishing: " & incumbent.net_profit & " " & incumbent.feasible & " " & iteration
 
-        ImproveSolution(incumbent, instance.penalty)
+        #ImproveSolution(incumbent, instance.penalty)
 
         #MsgBox "After polishing: " & incumbent.net_profit & " " & incumbent.feasible & " " & iteration
 
@@ -500,11 +526,12 @@ def VRP_Solver():
             incumbent = best_known
             EvaluateSolution(incumbent)
 
-            
+          
         iteration = iteration + 1
 
         if time_elapsed > solver_options.CPU_time_limit:
             break
+
 
         #print "Iterations performed: " & iteration
 
@@ -544,6 +571,26 @@ def VRP_Solver():
 
     #write the solution
     #print best_known.net_profit
+
+    print(incumbent.route_vertices)
+
+    print("Custo", incumbent.net_profit)
+
+    print("Custo rota", incumbent.net_profit_per_route[0,0])
+
+    print("totol distancia", incumbent.total_distance)
+
+    print("cnt ", incumbent.route_vertex_cnt[0,0])
+    
+    
+    '''
+    #print "Iterations performed: " & iteration
+
+
+    #Solver ALNS Terminar
+    #squeeze the solution # aperte a solução
+    #write the solution
+    #print best_known.net_profit
     #WriteSolution(best_known)
 
     #https://stackoverflow.com/questions/1316767/how-can-i-explicitly-free-memory-in-python
@@ -560,10 +607,13 @@ def VRP_Solver():
     #del best_known
     
     #gc.collect()
+
+    #candidate_list[0].TotalDistance = 10
+
+    print(candidate_list[0].TotalDistance)
     
     
-    
-    '''
+
     for i in range(0, vehicle_type_list.num_vehicle_types):
         #For j = 1 To vehicle_type_list.vehicle_types(i).number_available
         for j in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable):
@@ -580,11 +630,11 @@ def VRP_Solver():
     #print(incumbent.net_profit)
     '''
     #print(best_known.route_vertices)
-    print(incumbent.route_vertices)
+    #print(incumbent.route_vertices)
 
-    for i in range(0, vehicle_type_list.num_vehicle_types):
+    #for i in range(0, vehicle_type_list.num_vehicle_types):
         #For j = 1 To vehicle_type_list.vehicle_types(i).number_available
-        for j in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable):
-            for k in range(0, incumbent.route_vertex_cnt[i,j]):
-                print(incumbent.route_vertices[k, i, j])
+        #for j in range(0, vehicle_type_list.vehicle_types[i].NumberAvailable):
+            #for k in range(0, incumbent.route_vertex_cnt[i,j]):
+                #print(incumbent.route_vertices[k, i, j])
 VRP_Solver()

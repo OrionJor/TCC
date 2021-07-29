@@ -213,6 +213,13 @@ class Candidate(Candidate_Data):
         cave = Candidate_Data(mandatory, net_profit, total_distance, vertex_to_be_added, vehicle_type_index, vehicle_id, position)
         self.candidate_list.append(cave)
 
+    def __iter__(self):
+        for value in self.candidate_list:
+            return value
+
+    def __getitem__(self, i):
+        for value in self.candidate_list:
+            return value
 
 class DP_Data:
     def __init__(self):
