@@ -8,7 +8,7 @@ from datetime import datetime
 from random import randint
 import random
 import gc #limpar memória
-
+#atual
 
 #valores = 0 -> tipo long ou seja inteiro
 
